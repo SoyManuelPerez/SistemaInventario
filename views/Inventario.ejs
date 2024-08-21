@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventario</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/inventario.css">
+</head>
+<body>
+    <header>
+        <%- include('nav'); %>
+    </header>
+    <div class="container espacio">
+      <div class="login-page espacio">
+        <h1>Crear Producto</h1>
+        <br>
+        <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
+          <input type="text" name="Producto" id="Producto" placeholder="Nombre del producto" required>
+          <select name="Tipo" id="Tipo" class="form-select form-select-sm" aria-label=".form-select-sm example" required onchange="showFields()">
+            <option value="Null">Categoria</option>
+          </select>
+          <input type="number" name="Precio" id="Precio" placeholder="Precio del producto" required>
+          <input type="number" name="Cantidad" id="Cantidad" placeholder="Cantidad del producto" required>
+          <input type="file" name="Imagen" id="Imagen" accept="image/*" required>
+          <button type="submit">Crear</button>
+        </form>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row my-4">
+        <div class="col">
+          <input type="text" id="searchInput" class="form-control" placeholder="Buscar productos...">
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row" id="productContainer">
+        <% Productos.forEach( (Productos) => { %>
+          <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+            <div class="card mb-3" style="width: 100%;">
+              <img src="img/Productos/<%= Productos.Imagen %>" class="card-img-top" alt="Imagen del producto">
+              <div class="card-body">
+                <h5 class="card-title"><%= Productos.Producto %></h5>
+                <p class="Precio" data-precio="<%= Productos.Precio %>">$<%= Productos.Precio.toLocaleString('es-CO') %> COP</p>
+                <a href="/EliminarProducto/<%= Productos.id %>"><button type="submit" class="btn-agregar btn btn-danger">Eliminar</button></a> 
+                <button type="submit" class="btn-agregar btnModal btn btn-primary" data-id="<%= Productos.id %>">Actualizar</button>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      <div id="noProductMessage" class="text-center mt-4" style="display: none;">
+        <h1>Producto no encontrado.</h1>
+      </div>
+    </div>
+    <br>
+    <div id="modalAactualizar" class="modal fade" tabindex="-1" aria-labelledby="modalAactualizar" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="exampleModalLabel">Actualizar Producto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/EditarProducto" method="POST">
+              <input id="modalId" name="id" type="hidden" class="form-control" required>
+              <div class="mb-3">
+                <input id="modalProducto" name="Producto" type="text" class="form-control" placeholder="Nombre Producto" required>
+              </div>
+              <div class="mb-3">
+                <input id="modalPrecio" name="Precio" type="number" class="form-control" placeholder="Precio">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+<script src="js/buscador.js"></script>
+<script src="js/Modal.js"></script>
+<script src="js/actualizado.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</html>

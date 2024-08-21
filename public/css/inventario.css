@@ -1,0 +1,199 @@
+body {
+    color: black;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .login-page {
+    width: 360px;
+    margin: auto;
+  }
+  .Navegador {
+    list-style-type: none;
+    display: flex;
+    justify-content: center; 
+    background-color: #ffffff; 
+    color: #ffffff;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .Navegador li {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px;
+    background-color: #ffca1efa; 
+    border: 1px solid #cccccc; 
+    color: #ffffff;
+    text-align: center; 
+    flex: 1;
+    max-width: 25%; 
+  }
+  
+  .Navegador li:hover {
+    background-color: #fcc203;
+  }
+  
+  .Navegador a {
+    text-decoration: none; 
+    color: black; 
+  }
+  
+  @media (max-width: 768px) {
+    .Navegador li {
+        padding: 5px;
+        margin: 0 5px;
+        max-width: 100px; 
+    }
+    .Navegador a {
+      font-size: 0.9em; /* Reducir tamaño de fuente */
+    }
+    .Navegador {
+        padding: 5px 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .Navegador li {
+        padding: 3px;
+        margin: 0 3px;
+        max-width: 80px; 
+    }
+    .Navegador a {
+      font-size: 0.6em; /* Reducir tamaño de fuente */
+    }
+    .Navegador {
+        padding: 3px 0;
+    }
+    .espacio {
+      margin-top: 130px;
+    }
+  }
+  /* Asegúrate de que el carrito esté posicionado en la parte superior derecha */
+  .cart {
+    position: fixed;
+    top: 130px;
+    right: 50px;
+    z-index: 2000; /* Un valor mayor para asegurarse de que se superpone a otros elementos */
+  }
+  
+  .cart .notification {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  
+  /* Ajustes específicos para dispositivos móviles */
+  @media (max-width: 768px) {
+    .cart {
+      top: 40px; /* Ajusta según sea necesario para que se vea bien en móvil */
+      right: 90px; /* Ajusta según sea necesario para que se vea bien en móvil */
+    }
+    .espacio {
+      margin-top: 150px;
+    }
+  }
+  .whatsapp-button {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000; 
+    background-color: #25D366;
+    border-radius: 50%; 
+    padding: 5px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+  }
+  .whatsapp-button svg {
+    fill: white;
+  }
+  .form {
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(3, 3, 3, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  }
+  .form button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: rgb(0, 153, 255);
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #0e0e0e;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+  }
+  .form input {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    color: #000;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .form select {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .form button:hover,
+  .form button:active,
+  .form button:focus {
+    background: rgb(2, 126, 209);
+  }
+  
+  .container:before,
+  .container:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+  .espacio {
+    margin-top: 120px;
+  }
+  .card-img-top {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .cantidad-input {
+    width: 60px; /* Ajusta el tamaño del input */
+    text-align: center; /* Centra el texto dentro del input */
+    display: inline-block; /* Asegura que el input se comporte como un inline-block para el centrado */
+  }
+  .cantidad-label {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+  }
+  .cantidad-container {
+    text-align: center;
+    margin-bottom: 1rem; /* Añade espacio debajo del contenedor */
+  }

@@ -1,0 +1,58 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100svh;
+    font-size: larger;
+    background-color: gray;
+  }
+
+  header {
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-agregar {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #0056b3; 
+    color: white; 
+    text-align: center;
+    text-decoration: none; 
+    font-weight: bold;
+    border-radius: 4px; 
+    transition: background-color 0.3s; 
+  }
+  .card-title{
+    font-weight: bold;
+  }
+  .btn-agregar:hover {
+    background-color: #003d80; /* Color de fondo azul más oscuro al pasar el ratón */
+  }
+.Precio{
+    color: #02539B;
+    font-weight: bold;
+}
+.boton:hover {
+    cursor: pointer;
+    background-color: #fcc203;
+}
+.product-details h5, .product-details p {
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .quantity-control p, .total-price p {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .text-center p {
+    margin: 0;
+  }
