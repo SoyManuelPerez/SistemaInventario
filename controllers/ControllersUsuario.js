@@ -5,14 +5,14 @@ dotenv.config();
 //Mostrar Usuarios
 module.exports.mostrar = (req, res) => {
     Usuario.find({})
-    .then(usuario => res.render('Usuarios', {usuario: usuario}))
+    .then(usuario => res.render('RegistroU', {usuario: usuario}))
     .catch(err => console.log(err, 'Error mostrar Usuario no encontrado'))
 }
 //Guardar Usuarios
 module.exports.Crear = async (req,res)=>{
 const {user,type,password} = req.body
     if(!user || !password || !type){
-      res.redirect('/Usuarios')
+      res.redirect('/RegistroU')
     }
     else{
        const Usuariobuscar = await Usuario.findOne({user:user});
@@ -21,7 +21,7 @@ const {user,type,password} = req.body
        }else{
         const newUsuario = new Usuario({user,type,password})
         await newUsuario.save()
-        res.redirect('/Usuarios')
+        res.redirect('/RegistroU')
        }
     }
 }
@@ -29,13 +29,13 @@ const {user,type,password} = req.body
 module.exports.eliminar = (req,res) =>{
     const id = req.params.id
     Usuario.findByIdAndDelete({_id:id}).exec()
-  .then(resultado => {
+  .then(    resultado => {
     console.log("Objeto eliminado : ", resultado); 
   })
   .catch(error => {
     console.log(error) 
   });
-    res.redirect('/Usuarios')       
+    res.redirect('/RegistroU')       
 }
 //Editae 
 module.exports.editar = (req,res) =>{
@@ -49,7 +49,7 @@ module.exports.editar = (req,res) =>{
     .catch(error=>{
         console.log(error) 
     })
-    res.redirect('/Usuarios')  
+    res.redirect('/RegistroU')  
 }
 //Verificar Usuario
 module.exports.Login = (req, res) => {
