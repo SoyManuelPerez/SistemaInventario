@@ -1,14 +1,14 @@
 const express = require('express')
 const Catalogo = require('../controllers/ControllerCatalogo')
 const Inventario = require('../controllers/ControllerInventario')
-const routes = express.Router();
-routes.get('/',(req,res)=>{
+const router = express.Router();
+router.get('/',(req,res)=>{
     res.render('Login')
 });
-routes.get('/Catalogo',Catalogo.mostrar,(req,res)=>{
+router.get('/Catalogo',Catalogo.mostrar,(req,res)=>{
     res.render('Catalogo')
 });
-routes.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
+router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
     res.render('Inventario')
 });
-module.exports= routes
+module.exports= router
