@@ -13,7 +13,8 @@
   <header>
       <%- include('nav'); %>
   </header>
-  <div class="container flex-wrapper ">
+
+  <div class="container flex-wrapper espacio">
     <div class="content"> 
       <div class="row my-4">
         <div class="col">
@@ -33,7 +34,8 @@
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
                   </div>
-                  <button type="submit" class="btn-agregar btn btn-primary">Agregar al carrito</button>
+                  <br>
+                  <button type="submit" class="btn-agregar btn btn-primary">Agregar al pedido</button>
                 </form>
               </div>
             </div>

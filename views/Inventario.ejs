@@ -21,7 +21,10 @@
         <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
           <input type="text" name="Producto" id="Producto" placeholder="Nombre del producto" required>
           <select name="Tipo" id="Tipo" class="form-select form-select-sm" aria-label=".form-select-sm example" required onchange="showFields()">
-            <option value="Null">Categoria</option>
+            <option value="">Categoria</option>
+            <option value="Correa">Correa</option>
+            <option value="Bolso">Bolso</option>
+            
           </select>
           <input type="number" name="Precio" id="Precio" placeholder="Precio del producto" required>
           <input type="number" name="Cantidad" id="Cantidad" placeholder="Cantidad del producto" required>
@@ -42,7 +45,7 @@
         <% Productos.forEach( (Productos) => { %>
           <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
             <div class="card mb-3" style="width: 100%;">
-              <img src="img/Productos/<%= Productos.Imagen %>" class="card-img-top" alt="Imagen del producto">
+              <img src="img/Productos/<%= Productos.Imagen %>" class="card-img-top" width="100px" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Productos.Producto %></h5>
                 <p class="Precio" data-precio="<%= Productos.Precio %>">$<%= Productos.Precio.toLocaleString('es-CO') %> COP</p>
