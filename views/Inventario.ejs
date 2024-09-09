@@ -48,7 +48,7 @@
               <img src="img/Productos/<%= Productos.Imagen %>" class="card-img-top" width="100px" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Productos.Producto %></h5>
-                <p class="Precio" data-precio="<%= Productos.Precio %>">$<%= Productos.Precio.toLocaleString('es-CO') %> COP</p>
+                <p><Strong>Cantidad:</Strong><%= Productos.Cantidad %></p>
                 <a href="/EliminarProducto/<%= Productos.id %>"><button type="submit" class="btn-agregar btn btn-danger">Eliminar</button></a> 
                 <button type="submit" class="btn-agregar btnModal btn btn-primary" data-id="<%= Productos.id %>">Actualizar</button>
               </div>

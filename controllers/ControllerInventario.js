@@ -1,69 +1,138 @@
-const Productos = require('../models/Producto')
+const Productos = require('../models/Producto');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs')
-const dotenv = require('dotenv')
+const fs = require('fs');
+const dotenv = require('dotenv');
 const { exec } = require('child_process');
 dotenv.config();
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '../public/img/Productos'));
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); 
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   }
 });
-const upload = multer({ storage: storage });
-//Crear Producto
+
+const upload = multer({ storage });
+
+// Crear Producto
 module.exports.Crear = async (req, res) => {
-  upload.single('Imagen')(req, res, async function (err) {
+  upload.single('Imagen')(req, res, async (err) => {
     if (err) {
       return res.status(500).send("Error al subir la imagen.");
     }
-    const Producto = req.body.Producto;
-    const Precio = req.body.Precio;
-    const Tipo = req.body.Tipo;
+
+    const { Producto, Precio, Tipo, Cantidad } = req.body;
     const Imagen = req.file ? req.file.filename : '';
-    const newProducto = new Productos({ Producto, Precio, Tipo, Imagen });
+    const newProducto = new Productos({ Producto, Precio, Tipo, Cantidad, Imagen });
 
     try {
       await newProducto.save();
-      // Llama a la función para actualizar Git y pasa el response para manejar la respuesta
       updateGitRepo(res);
     } catch (error) {
-      res.status(500).send("Error al guardar el producto.");
       console.log(error);
+      res.status(500).send("Error al guardar el producto.");
     }
   });
+};
+
+// Eliminar Producto
+module.exports.eliminar = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const producto = await Productos.findById(id).exec();
+
+    if (producto) {
+      const absolutePath = path.resolve(__dirname, '../public/img/Productos/', producto.Imagen);
+      fs.unlink(absolutePath, (err) => {
+        if (err) {
+          console.error('Error al eliminar el archivo:', err);
+          return res.status(500).send('Error al eliminar el archivo.');
+        }
+      });
+
+      await Productos.findByIdAndDelete(id).exec();
+      console.log("Producto eliminado:", producto);
+      updateGitRepo(res);
+    } else {
+      res.status(404).send("Producto no encontrado.");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error al eliminar el producto.");
+  }
+};
+
+// Editar Producto
+module.exports.editar = async (req, res) => {
+  try {
+    const { id, Producto, Precio } = req.body;
+    const productoActualizado = await Productos.findByIdAndUpdate(id, { Producto, Precio }).exec();
+
+    if (productoActualizado) {
+      console.log("Producto Actualizado:", productoActualizado);
+      res.redirect('/Inventario');
+    } else {
+      res.status(404).send("Producto no encontrado.");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error al actualizar el producto.");
+  }
+};
+
+// Mostrar productos en catálogo
+module.exports.mostrar = async (req, res) => {
+  try {
+    const Cart = req.cookies.Anfomotos;
+    const [productos, carrito] = await Promise.all([
+      Productos.find({}).exec(),
+      Carrito.find({ Cart }).exec()
+    ]);
+
+    res.render('catalogo', { Producto: productos, Cart: carrito });
+  } catch (error) {
+    console.error('Error mostrando datos', error);
+    res.status(500).send('Error mostrando datos');
+  }
+};
+
+// Mostrar productos en Inventario
+module.exports.mostrarInventario = async (req, res) => {
+  try {
+    const productos = await Productos.find({}).exec();
+    res.render('Inventario', { Productos: productos });
+  } catch (error) {
+    console.error('Error mostrando datos', error);
+    res.status(500).send('Error mostrando datos');
+  }
 };
 
 // Función para ejecutar comandos de Git
 function runGitCommand(command, callback) {
   exec(command, (err, stdout, stderr) => {
     if (err) {
-      console.error(`Error ejecutando comando: ${command}`);
-      console.error(`Error: ${err.message}`);
-      console.error(`stderr: ${stderr}`);
+      console.error(`Error ejecutando comando: ${command}`, err.message, stderr);
       return callback(err);
     }
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
+    console.log(stdout);
     callback(null, stdout);
   });
 }
 
-// Función para configurar el usuario de Git
+// Configurar usuario de Git
 function configureGitUser(callback) {
   const command = 'git config --global user.email "Soy_ManuelPerez@outlook.com" && git config --global user.name "SoyManuelPerez"';
   runGitCommand(command, callback);
 }
 
-// Función para verificar si el repositorio remoto ya existe
+// Verificar si el repositorio remoto existe
 function checkRemoteExists(callback) {
   const command = 'git remote get-url origin';
   runGitCommand(command, (err, stdout, stderr) => {
     if (err) {
-      // Si hay un error, asumimos que el repositorio remoto no existe
       console.log("El repositorio remoto no está configurado.");
       return callback(null, false);
     }
@@ -72,7 +141,7 @@ function checkRemoteExists(callback) {
   });
 }
 
-// Función para agregar, hacer commit y empujar los cambios
+// Agregar, hacer commit y empujar los cambios
 function pushChanges(callback) {
   const gitCommands = `
     git checkout main
@@ -85,53 +154,10 @@ function pushChanges(callback) {
   runGitCommand(gitCommands, callback);
 }
 
-// Función para actualizar el repositorio de Git
-function updateGitRepo(res) {
-  configureGitUser((err) => {
-    if (err) {
-      res.status(500).send("Error configurando usuario de Git.");
-      return;
-    }
-
-    checkRemoteExists((err, exists) => {
-      if (err) {
-        res.status(500).send("Error verificando repositorio remoto.");
-        return;
-      }
-
-      if (!exists) {
-        configureGitRemote((err) => {
-          if (err) {
-            res.status(500).send("Error configurando repositorio remoto.");
-            return;
-          }
-          pushChanges((err) => {
-            if (err) {
-              res.status(500).send("Error empujando cambios al repositorio remoto.");
-              return;
-            }
-            console.log('Cambios empujados al repositorio remoto con éxito.');
-            res.redirect('/inventario');
-          });
-        });
-      } else {
-        pushChanges((err) => {
-          if (err) {
-            res.status(500).send("Error empujando cambios al repositorio remoto.");
-            return;
-          }
-          console.log('Cambios empujados al repositorio remoto con éxito.');
-          res.redirect('/inventario');
-        });
-      }
-    });
-  });
-}
-
-// Función para configurar el repositorio remoto
+// Configurar el repositorio remoto
 function configureGitRemote(callback) {
   const GITHUB_USERNAME = 'SoyManuelPerez';
-  const GITHUB_TOKEN = process.env.Token; // Asegúrate de que esta variable de entorno esté configurada
+  const GITHUB_TOKEN = process.env.Token;
   const GITHUB_REPOSITORY = 'AnfoMotos';
 
   const gitRemoteCommand = `git remote add origin https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}.git`;
@@ -144,68 +170,28 @@ function configureGitRemote(callback) {
   });
 }
 
-//Eliminar Producto
-module.exports.eliminar = (req,res) =>{
-  const id = req.params.id
-  Productos.findById({_id:id}).exec()
-.then(resultado => {
-  const foto = resultado.Imagen
-  const absolutePath = path.resolve(__dirname, '../public/img/Productos/',foto);
-  fs.unlink(absolutePath, (err) => {
-    if (err) {
-      console.error('Error al eliminar el archivo:', err);
-      return res.status(500).send('Error al eliminar el archivo.');
-    }
-  });
-  Productos.findByIdAndDelete({_id:id}).exec()
-  console.log("Objeto eliminado : ", resultado); 
-})
-.catch(error => {
-  console.log(error) 
-});
-  res.redirect('/inventario')       
-}
-//Editar Producto
-module.exports.editar = (req,res) =>{
-  console.log(req.body)
-    const id = req.body.id
-    const Producto = req.body.Producto
-    const Precio = req.body.Precio
-    Productos.findOneAndUpdate({_id:id},{Precio,Producto}).exec()
-    .then(resultado=>{
-        console.log("Objeto Actualizado : ", resultado); 
-    })
-    .catch(error=>{
-        console.log(error) 
-    })
-    res.redirect('/inventario')  
-}
-//Mostrar productos 
-module.exports.mostrar = (req, res) => {
-  const Cart = req.cookies.Anfomotos;
-  Promise.all([
-    Productos.find({}).then(result => result || []),
-    Carrito.find({Cart: Cart}).then(result => result || [])
-  ])
-  .then(([Producto,Cart]) => {
-    res.render('catalogo', {
-      Producto: Producto,
-      Cart:Cart
+// Actualizar el repositorio de Git
+function updateGitRepo(res) {
+  configureGitUser((err) => {
+    if (err) return res.status(500).send("Error configurando usuario de Git.");
+
+    checkRemoteExists((err, exists) => {
+      if (err) return res.status(500).send("Error verificando repositorio remoto.");
+
+      const finalizePush = (err) => {
+        if (err) return res.status(500).send("Error empujando cambios al repositorio remoto.");
+        console.log('Cambios empujados al repositorio remoto con éxito.');
+        res.redirect('/Inventario');
+      };
+
+      if (!exists) {
+        configureGitRemote((err) => {
+          if (err) return res.status(500).send("Error configurando repositorio remoto.");
+          pushChanges(finalizePush);
+        });
+      } else {
+        pushChanges(finalizePush);
+      }
     });
-  })
-  .catch(err => {
-    console.error('Error mostrando datos', err);
-    res.status(500).send('Error mostrando datos');
-  });
-};
-//Mostrar en inventario
-module.exports.mostrarInventario = (req, res) => {
-    Productos.find({})
-  .then(result => {
-    res.render('inventario', {Productos:result});
-  })
-  .catch(err => {
-    console.error('Error mostrando datos', err);
-    res.status(500).send('Error mostrando datos');
   });
 }
