@@ -28,7 +28,7 @@
               <img src="img/Productos/<%= Producto.Imagen %>" class="card-img-top" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Producto.Producto %></h5>
-                <p class="Precio">$<%= Producto.Precio.toLocaleString('es-CO') %> COP</p>
+                <p><Strong>Cantidad:</Strong><%= Productos.Cantidad %></p>
                 <form action="/Agregarcart/<%= Producto.id %>" method="POST">
                   <div class="cantidad-container">
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
