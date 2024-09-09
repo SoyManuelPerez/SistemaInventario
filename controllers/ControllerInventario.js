@@ -83,22 +83,6 @@ module.exports.editar = async (req, res) => {
   }
 };
 
-// Mostrar productos en catálogo
-module.exports.mostrar = async (req, res) => {
-  try {
-    const Cart = req.cookies.Anfomotos;
-    const [productos, carrito] = await Promise.all([
-      Productos.find({}).exec(),
-      Carrito.find({ Cart }).exec()
-    ]);
-
-    res.render('catalogo', { Producto: productos, Cart: carrito });
-  } catch (error) {
-    console.error('Error mostrando datos', error);
-    res.status(500).send('Error mostrando datos');
-  }
-};
-
 // Mostrar productos en Inventario
 module.exports.mostrarInventario = async (req, res) => {
   try {
