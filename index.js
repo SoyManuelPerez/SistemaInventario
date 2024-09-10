@@ -17,7 +17,7 @@ app.use(cookieParser());
 //Rutas
 Main =  require("./routers/Main.routes")
 User =  require("./routers/Users.routes")
-Inventario =  require("./routers/inventario.routes")
+Inventario =  require("./routers/Inventario.routes")
 app.use(Inventario)
 app.use(Main)
 app.use(User)
