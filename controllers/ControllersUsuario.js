@@ -12,7 +12,7 @@ module.exports.mostrar = (req, res) => {
 module.exports.Crear = async (req,res)=>{
 const {user,type,password} = req.body
     if(!user || !password || !type){
-      res.redirect('/RegistroU')
+      res.redirect('/Registro')
     }
     else{
        const Usuariobuscar = await Usuario.findOne({user:user});
@@ -21,7 +21,7 @@ const {user,type,password} = req.body
        }else{
         const newUsuario = new Usuario({user,type,password})
         await newUsuario.save()
-        res.redirect('/RegistroU')
+        res.redirect('/Registro')
        }
     }
 }
@@ -35,7 +35,7 @@ module.exports.eliminar = (req,res) =>{
   .catch(error => {
     console.log(error) 
   });
-    res.redirect('/RegistroU')       
+    res.redirect('/Registro')       
 }
 //Editae 
 module.exports.editar = (req,res) =>{
@@ -49,7 +49,7 @@ module.exports.editar = (req,res) =>{
     .catch(error=>{
         console.log(error) 
     })
-    res.redirect('/RegistroU')  
+    res.redirect('/Registro')  
 }
 //Verificar Usuario
 module.exports.Login = (req, res) => {
