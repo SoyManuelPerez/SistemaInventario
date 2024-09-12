@@ -1,20 +1,25 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-.espacio {
-  margin-top: 130px;
-}
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100svh;
-    font-size: larger;
-    background-color: gray;
+  color: black;
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+    background-color: rgb(228, 227, 227);
   }
-
+  .espacio{
+    padding-top: 120px;
+    padding-left: 5px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  h2 {
+    margin-top: 0;
+    padding-top: 20px; /* Si quieres un poco de espacio, ajusta el valor */
+  }
   header {
+    margin-bottom: 0;
     width: 100%;
     background: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -30,9 +35,6 @@ body {
     font-weight: bold;
     border-radius: 4px; 
     transition: background-color 0.3s; 
-  }
-  .card-title{
-    font-weight: bold;
   }
   .btn-agregar:hover {
     background-color: #003d80; /* Color de fondo azul más oscuro al pasar el ratón */

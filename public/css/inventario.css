@@ -4,7 +4,7 @@ body {
     font-family: "Roboto", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: gray;
+    background-color: rgb(228, 227, 227);
   }
   .login-page {
     width: 360px;

@@ -2,7 +2,9 @@ const Productos = require('../models/Producto');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const dotenv = require('dotenv');
+const Usuario = require('../models/Usuarios')
+const dotenv =  require('dotenv')
+const jsonwebtoken = require('jsonwebtoken');
 const { exec } = require('child_process');
 dotenv.config();
 
@@ -85,13 +87,30 @@ module.exports.editar = async (req, res) => {
 
 // Mostrar productos en Inventario
 module.exports.mostrarInventario = async (req, res) => {
-  try {
-    const productos = await Productos.find({}).exec();
-    res.render('Inventario', { Productos: productos });
-  } catch (error) {
-    console.error('Error mostrando datos', error);
-    res.status(500).send('Error mostrando datos');
+  const token = req.cookies.jwt;
+  let User = "";
+  if (token) {
+    jsonwebtoken.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        return res.redirect("/");
+      }
+      User = decoded.user;
+    }); 
   }
+  Promise.all([
+    Productos.find({}),
+    Usuario.find({ user: User })
+  ]).then(([Productos, Usuario]) => {
+    const tipoUsuario = Usuario.length > 0 ? Usuario[0].type : null;
+    res.render('Inventario', {
+      Productos: Productos,
+        tipoUsuario: tipoUsuario
+    });
+  })
+  .catch(err => {
+    console.log(err, 'Error mostrando datos');
+    res.status(500).send('Error mostrando datos');
+  });
 };
 
 // Función para ejecutar comandos de Git

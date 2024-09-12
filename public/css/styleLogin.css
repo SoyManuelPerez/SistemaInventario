@@ -6,7 +6,7 @@ body{
     align-items: center;
     min-height: 100svh;
     font-size: larger;
-    background-color: rgb(0, 139, 253);
+    background-color: rgb(228, 227, 227);
   }
   @import url(https://fonts.googleapis.com/css?family=Roboto:300);
   .logo{

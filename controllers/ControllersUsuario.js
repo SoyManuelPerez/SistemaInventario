@@ -4,15 +4,32 @@ const dotenv =  require('dotenv')
 dotenv.config();
 //Mostrar Usuarios
 module.exports.mostrar = (req, res) => {
-    Usuario.find({})
-    .then(usuario => res.render('RegistroU', {usuario: usuario}))
+    const token = req.cookies.jwt;
+    let User = "";
+    if (token) {
+      jsonwebtoken.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+          return res.redirect("/");
+        }
+        User = decoded.user;
+      }); 
+    }
+    Promise.all([
+        Usuario.find({}),
+        Usuario.find({ user: User })
+    ]).then(([Usuario, Usuario1]) => {
+      const tipoUsuario = Usuario1.length > 0 ? Usuario1[0].type : null;
+      res.render('RegistroU', {
+        usuario: Usuario,
+        tipoUsuario: tipoUsuario,
+      })})
     .catch(err => console.log(err, 'Error mostrar Usuario no encontrado'))
 }
 //Guardar Usuarios
 module.exports.Crear = async (req,res)=>{
 const {user,type,password} = req.body
     if(!user || !password || !type){
-      res.redirect('/RegistroU')
+      res.redirect('/Registro')
     }
     else{
        const Usuariobuscar = await Usuario.findOne({user:user});
@@ -21,7 +38,7 @@ const {user,type,password} = req.body
        }else{
         const newUsuario = new Usuario({user,type,password})
         await newUsuario.save()
-        res.redirect('/RegistroU')
+        res.redirect('/Registro')
        }
     }
 }
@@ -35,7 +52,7 @@ module.exports.eliminar = (req,res) =>{
   .catch(error => {
     console.log(error) 
   });
-    res.redirect('/RegistroU')       
+    res.redirect('/Registro')       
 }
 //Editae 
 module.exports.editar = (req,res) =>{
@@ -49,7 +66,7 @@ module.exports.editar = (req,res) =>{
     .catch(error=>{
         console.log(error) 
     })
-    res.redirect('/RegistroU')  
+    res.redirect('/Registro')  
 }
 //Verificar Usuario
 module.exports.Login = (req, res) => {
@@ -86,7 +103,7 @@ module.exports.Login = (req, res) => {
         if (type === "Admin") {
             res.send({ status: "ok", message: "Usuario loggeado", redirect: "/catalogo" });
         } else if (type === "Vendedor") {
-            res.send({ status: "ok", message: "Usuario loggeado", redirect: "/hospedaje" });
+            res.send({ status: "ok", message: "Usuario loggeado", redirect: "/catalogo" });
         }
     })
     .catch(err => {
@@ -96,7 +113,7 @@ module.exports.Login = (req, res) => {
 };
 
 module.exports.logout =(req,res)=>{
-    res.render('login')
+    res.render('Login')
 }
 
 
