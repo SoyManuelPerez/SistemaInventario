@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Producto = new mongoose.Schema({
+const Pedido = new mongoose.Schema({
     Producto : String,
     Imagen : String,
     Cantidad : Number,
@@ -7,4 +7,4 @@ const Producto = new mongoose.Schema({
     Cliente : String,
     Precio : Number
 })
-module.exports = mongoose.model('Producto', Producto)
+module.exports = mongoose.model('Pedido', Pedido)
