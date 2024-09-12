@@ -23,13 +23,11 @@ const upload = multer({ storage });
 module.exports.Crear = async (req, res) => {
   upload.single('Imagen')(req, res, async (err) => {
     if (err) {
-      return res.status(500).send("Error al subir la imagen.",err);
+      return res.status(500).send("Error al subir la imagen.");
     }
-
     const { Producto, Precio, Tipo, Cantidad } = req.body;
     const Imagen = req.file ? req.file.filename : '';
     const newProducto = new Productos({ Producto, Precio, Tipo, Cantidad, Imagen });
-
     try {
       await newProducto.save();
       updateGitRepo(res);
