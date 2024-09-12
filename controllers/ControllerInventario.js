@@ -2,8 +2,8 @@ const Productos = require('../models/Producto');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const Usuario = require('../models/Usuarios');
-const dotenv = require('dotenv');
+const Usuario = require('../models/Usuarios')
+const dotenv =  require('dotenv')
 const jsonwebtoken = require('jsonwebtoken');
 const { exec } = require('child_process');
 dotenv.config();
@@ -25,9 +25,11 @@ module.exports.Crear = async (req, res) => {
     if (err) {
       return res.status(500).send("Error al subir la imagen.");
     }
+
     const { Producto, Precio, Tipo, Cantidad } = req.body;
     const Imagen = req.file ? req.file.filename : '';
     const newProducto = new Productos({ Producto, Precio, Tipo, Cantidad, Imagen });
+
     try {
       await newProducto.save();
       updateGitRepo(res);
@@ -93,7 +95,7 @@ module.exports.mostrarInventario = async (req, res) => {
         return res.redirect("/");
       }
       User = decoded.user;
-    });
+    }); 
   }
   Promise.all([
     Productos.find({}),
@@ -102,7 +104,7 @@ module.exports.mostrarInventario = async (req, res) => {
     const tipoUsuario = Usuario.length > 0 ? Usuario[0].type : null;
     res.render('Inventario', {
       Productos: Productos,
-      tipoUsuario: tipoUsuario
+        tipoUsuario: tipoUsuario
     });
   })
   .catch(err => {
