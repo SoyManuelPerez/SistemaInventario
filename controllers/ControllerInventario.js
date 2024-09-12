@@ -23,7 +23,7 @@ const upload = multer({ storage });
 module.exports.Crear = async (req, res) => {
   upload.single('Imagen')(req, res, async (err) => {
     if (err) {
-      return res.status(500).send("Error al subir la imagen.");
+      return res.status(500).send("Error al subir la imagen.",err);
     }
 
     const { Producto, Precio, Tipo, Cantidad } = req.body;
