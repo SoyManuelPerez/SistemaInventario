@@ -21,21 +21,38 @@ const upload = multer({ storage });
 
 // Crear Producto
 module.exports.Crear = async (req, res) => {
-  upload.single('Imagen')(req, res, async (err) => {
+  upload.single('Imagen')(req, res, async function (err) {
     if (err) {
       return res.status(500).send("Error al subir la imagen.");
     }
 
-    const { Producto, Precio, Tipo, Cantidad } = req.body;
+    // Capturando las cantidades de las tallas
+    const T30 = req.body.Cantidad30;
+    const T32 = req.body.Cantidad32;
+    const T34 = req.body.Cantidad34;
+    const T36 = req.body.Cantidad36; // Se agregó la talla 36
+    const T38 = req.body.Cantidad38;
+    const T40 = req.body.Cantidad40;
+    const T42 = req.body.Cantidad42;
+    const T44 = req.body.Cantidad44;
+    const T46 = req.body.Cantidad46; // Se corrigió el id de la talla 46
+
+    // Capturando los demás datos del formulario
+    const Producto = req.body.Producto;
+    const Precio = req.body.Precio;
+    const Tipo = req.body.Tipo;
     const Imagen = req.file ? req.file.filename : '';
-    const newProducto = new Productos({ Producto, Precio, Tipo, Cantidad, Imagen });
+
+    // Crear el objeto del nuevo producto
+    const newProducto = new Productos({ Producto, Precio, Tipo, Imagen, T30, T32, T34, T36, T38, T40, T42, T44, T46 });
 
     try {
+      console.log(newProducto);
       await newProducto.save();
-      updateGitRepo(res);
+      res.redirect('/Inventario');
     } catch (error) {
-      console.log(error);
       res.status(500).send("Error al guardar el producto.");
+      console.log(error);
     }
   });
 };
