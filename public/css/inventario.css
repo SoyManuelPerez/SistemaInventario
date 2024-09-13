@@ -10,85 +10,39 @@ body {
     width: 360px;
     margin: auto;
   }
-  .Navegador {
-    list-style-type: none;
+  .tallas-container {
     display: flex;
-    justify-content: center; 
-    background-color: #ffffff; 
-    color: #ffffff;
-    padding: 0;
-    margin: 0;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    gap: 1px; /* Espacio entre los inputs */
+    justify-content: flex-start; /* Alinea los elementos al inicio */
   }
   
-  .Navegador li {
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    padding: 10px;
-    background-color: #ffca1efa; 
-    border: 1px solid #cccccc; 
-    color: #ffffff;
-    text-align: center; 
-    flex: 1;
-    max-width: 25%; 
+  .talla-item p {
+    font-size: 16px; /* Aumenta el tamaño de la fuente */
+    margin-bottom: 5px; /* Añade espacio entre el texto y el input */
+    font-weight: bold; /* Resalta el texto */
   }
   
-  .Navegador li:hover {
-    background-color: #fcc203;
+  .talla-item {
+    width: calc(33.33% - 10px); /* Establece el ancho para que quepan 3 elementos por fila */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px; /* Añade un margen inferior para separar las filas */
   }
-  
-  .Navegador a {
-    text-decoration: none; 
-    color: black; 
-  }
-  
-  @media (max-width: 768px) {
-    .Navegador li {
-        padding: 5px;
-        margin: 0 5px;
-        max-width: 100px; 
-    }
-    .Navegador a {
-      font-size: 0.9em; /* Reducir tamaño de fuente */
-    }
-    .Navegador {
-        padding: 5px 0;
-    }
+
+  .talla-item input {
+    width: 80px; /* Ajusta el ancho del input según sea necesario */
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    font-size: 14px;
   }
   
   @media (max-width: 480px) {
-    .Navegador li {
-        padding: 3px;
-        margin: 0 3px;
-        max-width: 80px; 
-    }
-    .Navegador a {
-      font-size: 0.6em; /* Reducir tamaño de fuente */
-    }
-    .Navegador {
-        padding: 3px 0;
-    }
     .espacio {
       margin-top: 130px;
     }
-  }
-  /* Asegúrate de que el carrito esté posicionado en la parte superior derecha */
-  .cart {
-    position: fixed;
-    top: 130px;
-    right: 50px;
-    z-index: 2000; /* Un valor mayor para asegurarse de que se superpone a otros elementos */
-  }
-  
-  .cart .notification {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
   }
   
   /* Ajustes específicos para dispositivos móviles */
@@ -101,32 +55,18 @@ body {
       margin-top: 150px;
     }
   }
-  .whatsapp-button {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 1000; 
-    background-color: #25D366;
-    border-radius: 50%; 
-    padding: 5px; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-  }
-  .whatsapp-button svg {
-    fill: white;
-  }
   .form {
     position: relative;
     z-index: 1;
     background: #ffffff;
-    max-width: 360px;
+    max-width: 800px; /* Aumenta el ancho máximo aquí */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
     margin: 0 auto 100px;
     padding: 45px;
     text-align: center;
     box-shadow: 0 0 20px 0 rgba(3, 3, 3, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
   }
+  
   .form button {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;

@@ -20,14 +20,53 @@
         <br>
         <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
           <input type="text" name="Producto" id="Producto" placeholder="Nombre del producto" required>
+          
           <select name="Tipo" id="Tipo" class="form-select form-select-sm" aria-label=".form-select-sm example" required onchange="showFields()">
             <option value="">Categoria</option>
             <option value="Correa">Correa</option>
             <option value="Bolso">Bolso</option>
-            
           </select>
+          
           <input type="number" name="Precio" id="Precio" placeholder="Precio del producto" required>
-          <input type="number" name="Cantidad" id="Cantidad" placeholder="Cantidad del producto" required>
+          <label for="">Cantidad por talla</label>
+          <div class="tallas-container">
+            <div class="talla-item">
+              <p>30</p>
+              <input type="number" name="Cantidad30" id="Cantidad30" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>32</p>
+              <input type="number" name="Cantidad32" id="Cantidad32" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>34</p>
+              <input type="number" name="Cantidad34" id="Cantidad34" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>36</p>
+              <input type="number" name="Cantidad36" id="Cantidad36" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>38</p>
+              <input type="number" name="Cantidad38" id="Cantidad38" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>40</p>
+              <input type="number" name="Cantidad40" id="Cantidad40" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>42</p>
+              <input type="number" name="Cantidad42" id="Cantidad42" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>44</p>
+              <input type="number" name="Cantidad44" id="Cantidad44" min="0" value="0">
+            </div>
+            <div class="talla-item">
+              <p>46</p>
+              <input type="number" name="Cantidad46" id="Cantidad42" min="0" value="0">
+            </div>
+          </div>
           <input type="file" name="Imagen" id="Imagen" accept="image/*" required>
           <button type="submit">Crear</button>
         </form>
