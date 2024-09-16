@@ -9,15 +9,18 @@ const onl = (element, event, selector, handler) => {
 };
 
 onl(document, 'click', '.btnModal', e => {
-  const card = e.target.closest('.card'); // Encuentra la tarjeta contenedora
-  const producto = card.querySelector('.card-title').innerText; // Obtiene el nombre del producto
-  const precio = card.querySelector('.Precio').getAttribute('data-precio'); // Obtiene el precio original del producto
-  const id = e.target.getAttribute('data-id'); // Obtiene el ID del producto
-
-  // Asigna los valores a los campos del modal
-  document.getElementById('modalProducto').value = producto;
-  document.getElementById('modalPrecio').value = precio;
-  document.getElementById('modalId').value = id; // Asigna el ID al campo oculto
-
-  modalAactualizar.show();
+  const fila = e.target.closest('tr'); // Obtiene el tr correcto
+    const celdas = fila.children;
+      MProducto.value = celdas[1].innerHTML.trim(); 
+      MCantidad30.value = celdas[2].innerHTML.trim();
+      MCantidad32.value = celdas[3].innerHTML.trim();
+      MCantidad34.value = celdas[4].innerHTML.trim();
+      MCantidad36.value = celdas[5].innerHTML.trim();
+      MCantidad38.value = celdas[6].innerHTML.trim();
+      MCantidad40.value = celdas[7].innerHTML.trim();
+      MCantidad42.value = celdas[8].innerHTML.trim();
+      MCantidad44.value = celdas[9].innerHTML.trim();
+      MCantidad46.value = celdas[10].innerHTML.trim();
+      MProducto.setAttribute('readonly', true)
+      modalAactualizar.show();
 });

@@ -30,12 +30,12 @@ module.exports.Crear = async (req, res) => {
     const T30 = req.body.Cantidad30;
     const T32 = req.body.Cantidad32;
     const T34 = req.body.Cantidad34;
-    const T36 = req.body.Cantidad36; // Se agregó la talla 36
+    const T36 = req.body.Cantidad36; 
     const T38 = req.body.Cantidad38;
     const T40 = req.body.Cantidad40;
     const T42 = req.body.Cantidad42;
     const T44 = req.body.Cantidad44;
-    const T46 = req.body.Cantidad46; // Se corrigió el id de la talla 46
+    const T46 = req.body.Cantidad46; 
 
     // Capturando los demás datos del formulario
     const Producto = req.body.Producto;
@@ -87,8 +87,21 @@ module.exports.eliminar = async (req, res) => {
 // Editar Producto
 module.exports.editar = async (req, res) => {
   try {
-    const { id, Producto, Precio } = req.body;
-    const productoActualizado = await Productos.findByIdAndUpdate(id, { Producto, Precio }).exec();
+    const { MProducto, MCantidad30, MCantidad32, MCantidad34, MCantidad36, MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46 } = req.body;
+    const productoActualizado = await Productos.findOneAndUpdate(
+      { Producto: MProducto }, 
+      {
+        T30: MCantidad30,
+        T32: MCantidad32,
+        T34: MCantidad34,
+        T36: MCantidad36,
+        T38: MCantidad38,
+        T40: MCantidad40,
+        T42: MCantidad42,
+        T44: MCantidad44,
+        T46: MCantidad46
+      }
+    ).exec();
 
     if (productoActualizado) {
       console.log("Producto Actualizado:", productoActualizado);
@@ -101,6 +114,7 @@ module.exports.editar = async (req, res) => {
     res.status(500).send("Error al actualizar el producto.");
   }
 };
+
 
 // Mostrar productos en Inventario
 module.exports.mostrarInventario = async (req, res) => {

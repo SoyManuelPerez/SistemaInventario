@@ -75,33 +75,48 @@
         
       </div>
     </div>
-    <div class="container">
-      <div class="row my-4">
-        <div class="col">
-          <input type="text" id="searchInput" class="form-control" placeholder="Buscar productos...">
+        <h1>Inventario</h1>
+        <div class="container" >
+            <table id="huesped" class="table table-bordered text-center" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th scope="col">Imgagen</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">30 </th>
+                        <th scope="col">32 </th>
+                        <th scope="col">34 </th>
+                        <th scope="col">36 </th>
+                        <th scope="col">38 </th>
+                        <th scope="col">40 </th>
+                        <th scope="col">42 </th>
+                        <th scope="col">44 </th>
+                        <th scope="col">46 </th>
+                        <th scope="col">Opcion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% Productos.forEach( (Productos) => { %>
+                        <tr>
+                            <td> <img src="../img/Productos/<%= Productos.Imagen %>" width="80px" alt=""></td>
+                            <td> <%= Productos.Producto %></td>
+                            <td> <%= Productos.T30 %></td>
+                            <td> <%= Productos.T32 %></td>
+                            <td> <%= Productos.T34 %></td>
+                            <td> <%= Productos.T36 %></td>
+                            <td> <%= Productos.T38 %></td>
+                            <td> <%= Productos.T40 %></td>
+                            <td> <%= Productos.T42 %></td>
+                            <td> <%= Productos.T44 %></td>
+                            <td> <%= Productos.T46 %></td>
+                            <td> 
+                                <a href="/EliminarProducto/<%= Productos.id %>" type="button" class="btnAgregarProducto btn btn-outline-danger  bi bi-trash3"> </a>
+                                <button  class="btnModal btn btn-outline-primary bi bi-pencil-square" ></button>
+                            </td>
+                        </tr>
+                   <% }) %>
+                </tbody>
+            </table>
         </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row" id="productContainer">
-        <% Productos.forEach( (Productos) => { %>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
-            <div class="card mb-3" style="width: 100%;">
-              <img src="img/Productos/<%= Productos.Imagen %>" class="card-img-top" width="100px" alt="Imagen del producto">
-              <div class="card-body">
-                <h5 class="card-title"><%= Productos.Producto %></h5>
-                <p><Strong>Cantidad:</Strong><%= Productos.Cantidad %></p>
-                <a href="/EliminarProducto/<%= Productos.id %>"><button type="submit" class="btn-agregar btn btn-danger">Eliminar</button></a> 
-                <button type="submit" class="btn-agregar btnModal btn btn-primary" data-id="<%= Productos.id %>">Actualizar</button>
-              </div>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-      <div id="noProductMessage" class="text-center mt-4" style="display: none;">
-        <h1>Producto no encontrado.</h1>
-      </div>
-    </div>
     <br>
     <div id="modalAactualizar" class="modal fade" tabindex="-1" aria-labelledby="modalAactualizar" aria-hidden="true">
       <div class="modal-dialog">
@@ -111,25 +126,54 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form action="/EditarProducto" method="POST">
-              <input id="modalId" name="id" type="hidden" class="form-control" required>
-              <div class="mb-3">
-                <input id="modalProducto" name="Producto" type="text" class="form-control" placeholder="Nombre Producto" required>
+            <form action="/EditarProducto" method="POST" class="form">
+              <input type="text" name="MProducto" id="MProducto" placeholder="Nombre del producto" >
+              <label for="">Cantidad por talla</label>
+              <div class="tallas-container">
+                <div class="talla-item">
+                  <p>30</p>
+                  <input type="number" name="MCantidad30" id="MCantidad30" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>32</p>
+                  <input type="number" name="MCantidad32" id="MCantidad32" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>34</p>
+                  <input type="number" name="MCantidad34" id="MCantidad34" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>36</p>
+                  <input type="number" name="MCantidad36" id="MCantidad36" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>38</p>
+                  <input type="number" name="MCantidad38" id="MCantidad38" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>40</p>
+                  <input type="number" name="MCantidad40" id="MCantidad40" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>42</p>
+                  <input type="number" name="MCantidad42" id="MCantidad42" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>44</p>
+                  <input type="number" name="MCantidad44" id="MCantidad44" min="0">
+                </div>
+                <div class="talla-item">
+                  <p>46</p>
+                  <input type="number" name="MCantidad46" id="MCantidad46" min="0">
+                </div>
               </div>
-              <div class="mb-3">
-                <input id="modalPrecio" name="Precio" type="number" class="form-control" placeholder="Precio">
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Actualizar</button>
-              </div>
+              <button type="submit">Actualizar</button>
             </form>
           </div>
         </div>
       </div>
     </div>
 </body>
-<script src="js/buscador.js"></script>
 <script src="js/Modal.js"></script>
-<script src="js/actualizado.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </html>
