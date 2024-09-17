@@ -24,3 +24,25 @@ onl(document, 'click', '.btnModal', e => {
       MProducto.setAttribute('readonly', true)
       modalAactualizar.show();
 });
+function showFields() {
+  const tipo = document.getElementById("Tipo").value;
+  const correasSection = document.getElementById("correas-section");
+  const bolsoSection = document.getElementById("bolso-section");
+  
+  if (tipo === "Correa") {
+    correasSection.style.display = "block";
+    bolsoSection.style.display = "none";
+  } else if (tipo === "Bolso") {
+    correasSection.style.display = "none";
+    bolsoSection.style.display = "block";
+  } else {
+    correasSection.style.display = "none";
+    bolsoSection.style.display = "none";
+  }
+}
+
+// Ocultamos ambos campos al cargar la página
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("correas-section").style.display = "none";
+  document.getElementById("bolso-section").style.display = "none";
+})
