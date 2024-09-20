@@ -12,6 +12,8 @@ const Producto = new mongoose.Schema({
   T42: { type: Number, default: 0 },
   T44: { type: Number, default: 0 },
   T46: { type: Number, default: 0 },
+  Type: { type: String, required: true },
+  Cantidad: { type: Number, default: 0 },
   Vendidos: { type: Number, default: 0 },
   Ingreso: { type: Number, default: 0 },
   Precio: { type: Number, required: true }
