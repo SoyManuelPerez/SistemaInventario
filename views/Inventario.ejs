@@ -107,7 +107,6 @@
                 </thead>
                 <tbody>
                   <% Productos.forEach( (producto) => { 
-                    const cantidad = producto.T30 + producto.T32 + producto.T34 + producto.T36 + producto.T38 + producto.T40 + producto.T42 + producto.T44 + producto.T46;
                 %>
                 <tr>
                     <td> <img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
@@ -121,7 +120,7 @@
                     <td> <%= producto.T42 %></td>
                     <td> <%= producto.T44 %></td>
                     <td> <%= producto.T46 %></td>
-                    <td> <%= cantidad %></td>
+                    <td> <%= producto.Cantidad %></td>
                     <td> 
                         <a href="/EliminarProducto/<%= producto.id %>" type="button" class="btnAgregarProducto btn btn-outline-danger bi bi-trash3"></a>
                         <button class="btnModal btn btn-outline-primary bi bi-pencil-square"></button>

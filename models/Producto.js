@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const Producto = new mongoose.Schema({
   Producto: { type: String, required: true },
   Imagen: { type: String, required: true },
@@ -12,11 +11,12 @@ const Producto = new mongoose.Schema({
   T42: { type: Number, default: 0 },
   T44: { type: Number, default: 0 },
   T46: { type: Number, default: 0 },
-  Type: { type: String, required: true },
-  Cantidad: { type: Number, default: 0 },
+  Tipo: { type: String, required: true },  // Asegúrate que el campo sea "Tipo" aquí
+  Cantidad: { type: Number, default: 0 },  // Para los bolsos
   Vendidos: { type: Number, default: 0 },
   Ingreso: { type: Number, default: 0 },
   Precio: { type: Number, required: true }
 });
+
 
 module.exports = mongoose.model('Producto', Producto);

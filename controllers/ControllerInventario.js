@@ -26,25 +26,26 @@ module.exports.Crear = async (req, res) => {
       return res.status(500).send("Error al subir la imagen.");
     }
 
-    // Capturando las cantidades de las tallas
-    const T30 = req.body.Cantidad30;
-    const T32 = req.body.Cantidad32;
-    const T34 = req.body.Cantidad34;
-    const T36 = req.body.Cantidad36; 
-    const T38 = req.body.Cantidad38;
-    const T40 = req.body.Cantidad40;
-    const T42 = req.body.Cantidad42;
-    const T44 = req.body.Cantidad44;
-    const T46 = req.body.Cantidad46; 
-
-    // Capturando los demás datos del formulario
-    const Producto = req.body.Producto;
-    const Precio = req.body.Precio;
-    const Tipo = req.body.Tipo;
+    // Capturar datos del formulario
+    const { Producto, Precio, Tipo, CantidadBolso, Cantidad30, Cantidad32, Cantidad34, Cantidad36, Cantidad38, Cantidad40, Cantidad42, Cantidad44, Cantidad46 } = req.body;
     const Imagen = req.file ? req.file.filename : '';
 
+    // Lógica para manejar los tipos de producto
+    let cantidades = {};
+    if (Tipo === 'Correa') {
+      cantidades = { T30: Cantidad30, T32: Cantidad32, T34: Cantidad34, T36: Cantidad36, T38: Cantidad38, T40: Cantidad40, T42: Cantidad42, T44: Cantidad44, T46: Cantidad46 };
+    } else if (Tipo === 'Bolso') {
+      cantidades = { Cantidad: CantidadBolso };
+    }
+
     // Crear el objeto del nuevo producto
-    const newProducto = new Productos({ Producto, Precio, Tipo, Imagen, T30, T32, T34, T36, T38, T40, T42, T44, T46 });
+    const newProducto = new Productos({
+      Producto,
+      Precio,
+      Tipo,
+      Imagen,
+      ...cantidades
+    });
 
     try {
       console.log(newProducto);
@@ -56,6 +57,7 @@ module.exports.Crear = async (req, res) => {
     }
   });
 };
+
 
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
