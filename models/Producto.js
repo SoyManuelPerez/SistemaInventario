@@ -11,8 +11,8 @@ const Producto = new mongoose.Schema({
   T42: { type: Number, default: 0 },
   T44: { type: Number, default: 0 },
   T46: { type: Number, default: 0 },
-  Tipo: { type: String, required: true },  // Asegúrate que el campo sea "Tipo" aquí
-  Cantidad: { type: Number, default: 0 },  // Para los bolsos
+  Tipo: { type: String, required: true },  
+  Cantidad: { type: Number, default: 0 },  
   Vendidos: { type: Number, default: 0 },
   Ingreso: { type: Number, default: 0 },
   Precio: { type: Number, required: true }

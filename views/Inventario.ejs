@@ -85,52 +85,78 @@
         </form>
       </div>
     </div>
-        <h1>Inventario</h1>
-        <div class="container" >
-            <table id="inventario" class="table table-bordered text-center" style="width: 100%;">
-                    <thead>
-                    <tr>
-                        <th scope="col">Imagen</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">30 </th>
-                        <th scope="col">32 </th>
-                        <th scope="col">34 </th>
-                        <th scope="col">36 </th>
-                        <th scope="col">38 </th>
-                        <th scope="col">40 </th>
-                        <th scope="col">42 </th>
-                        <th scope="col">44 </th>
-                        <th scope="col">46 </th>
-                        <th scope="col">Cantidad </th>
-                        <th scope="col">Opcion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  <% Productos.forEach( (producto) => { 
-                %>
-                <tr>
-                    <td> <img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
-                    <td> <%= producto.Producto %></td>
-                    <td> <%= producto.T30 %></td>
-                    <td> <%= producto.T32 %></td>
-                    <td> <%= producto.T34 %></td>
-                    <td> <%= producto.T36 %></td>
-                    <td> <%= producto.T38 %></td>
-                    <td> <%= producto.T40 %></td>
-                    <td> <%= producto.T42 %></td>
-                    <td> <%= producto.T44 %></td>
-                    <td> <%= producto.T46 %></td>
-                    <td> <%= producto.Cantidad %></td>
-                    <td> 
-                        <a href="/EliminarProducto/<%= producto.id %>" type="button" class="btnAgregarProducto btn btn-outline-danger bi bi-trash3"></a>
-                        <button class="btnModal btn btn-outline-primary bi bi-pencil-square"></button>
-                    </td>
-                </tr>
-                <% }) %>
-                
-                </tbody>
-            </table>
-        </div>
+    <div class="container">
+      <h1>Inventario de Correas</h1>
+      <table id="inventarioCorreas" class="table table-bordered text-center" style="width: 100%;">
+        <thead>
+          <tr>
+            <th scope="col">Imagen</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">30</th>
+            <th scope="col">32</th>
+            <th scope="col">34</th>
+            <th scope="col">36</th>
+            <th scope="col">38</th>
+            <th scope="col">40</th>
+            <th scope="col">42</th>
+            <th scope="col">44</th>
+            <th scope="col">46</th>
+            <th scope="col">Cantidad Total</th>
+            <th scope="col">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Productos.filter(producto => producto.Tipo === 'Correa').forEach(producto => { %>
+            <tr>
+              <td><img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
+              <td><%= producto.Producto %></td>
+              <td><%= producto.T30 %></td>
+              <td><%= producto.T32 %></td>
+              <td><%= producto.T34 %></td>
+              <td><%= producto.T36 %></td>
+              <td><%= producto.T38 %></td>
+              <td><%= producto.T40 %></td>
+              <td><%= producto.T42 %></td>
+              <td><%= producto.T44 %></td>
+              <td><%= producto.T46 %></td>
+              <td><%= producto.Cantidad %></td>
+              <td>
+                <a href="/EliminarProducto/<%= producto.id %>" class="btn btn-outline-danger bi bi-trash3"></a>
+                <button class="btnModal btn btn-outline-primary bi bi-pencil-square"></button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="container">
+      <h1>Inventario de Bolsos</h1>
+      <table id="inventarioBolsos" class="table table-bordered text-center" style="width: 100%;">
+        <thead>
+          <tr>
+            <th scope="col">Imagen</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Cantidad</th>
+            <th scope="col">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Productos.filter(producto => producto.Tipo === 'Bolso').forEach(producto => { %>
+            <tr>
+              <td><img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
+              <td><%= producto.Producto %></td>
+              <td><%= producto.Cantidad %></td>
+              <td>
+                <a href="/EliminarProducto/<%= producto.id %>" class="btn btn-outline-danger bi bi-trash3"></a>
+                <button class="btnModal btn btn-outline-primary bi bi-pencil-square"></button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    
     <br>
     <div id="modalAactualizar" class="modal fade" tabindex="-1" aria-labelledby="modalAactualizar" aria-hidden="true">
       <div class="modal-dialog">
@@ -190,11 +216,20 @@
 </body>
 <script>
   $(document).ready(function() {
-    $('#inventario').DataTable({
+    $('#inventarioCorreas').DataTable({
       "language": {
         "url": "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json"
       },
-      "lengthChange": false // Desactiva el menú para mostrar número de registros
+      "lengthChange": false,  // Desactiva el menú para cambiar el número de registros mostrados
+      "pageLength": 5         // Máximo de 5 filas por página
+    });
+
+    $('#inventarioBolsos').DataTable({
+      "language": {
+        "url": "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json"
+      },
+      "lengthChange": false,  // Desactiva el menú para cambiar el número de registros mostrados
+      "pageLength": 5         // Máximo de 5 filas por página
     });
   });
 </script>

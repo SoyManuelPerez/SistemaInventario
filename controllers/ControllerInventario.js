@@ -33,9 +33,31 @@ module.exports.Crear = async (req, res) => {
     // Lógica para manejar los tipos de producto
     let cantidades = {};
     if (Tipo === 'Correa') {
-      cantidades = { T30: Cantidad30, T32: Cantidad32, T34: Cantidad34, T36: Cantidad36, T38: Cantidad38, T40: Cantidad40, T42: Cantidad42, T44: Cantidad44, T46: Cantidad46 };
+      const cantidadTotal = 
+        Number(Cantidad30) + 
+        Number(Cantidad32) + 
+        Number(Cantidad34) + 
+        Number(Cantidad36) + 
+        Number(Cantidad38) + 
+        Number(Cantidad40) + 
+        Number(Cantidad42) + 
+        Number(Cantidad44) + 
+        Number(Cantidad46);
+
+      cantidades = { 
+        T30: Number(Cantidad30), 
+        T32: Number(Cantidad32), 
+        T34: Number(Cantidad34), 
+        T36: Number(Cantidad36), 
+        T38: Number(Cantidad38), 
+        T40: Number(Cantidad40), 
+        T42: Number(Cantidad42), 
+        T44: Number(Cantidad44), 
+        T46: Number(Cantidad46),
+        Cantidad: cantidadTotal // Total de todas las tallas
+      };
     } else if (Tipo === 'Bolso') {
-      cantidades = { Cantidad: CantidadBolso };
+      cantidades = { Cantidad: Number(CantidadBolso) };
     }
 
     // Crear el objeto del nuevo producto
@@ -57,6 +79,7 @@ module.exports.Crear = async (req, res) => {
     }
   });
 };
+
 
 
 // Eliminar Producto
