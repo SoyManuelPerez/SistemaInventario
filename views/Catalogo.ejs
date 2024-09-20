@@ -40,19 +40,24 @@
               <img src="img/Productos/<%= Producto.Imagen %>" class="card-img-top" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Producto.Producto %></h5>
-                <div class="tallas">
-                  <!-- Añadir botones de selección de tallas con diseño responsivo -->
-                  <div class="form-group">
-                    <label for="talla-<%= Producto.id %>">Talla</label>
-                    <div class="btn-group-toggle d-flex flex-wrap justify-content-between" data-toggle="buttons">
-                      <% for (let talla = 30; talla <= 46; talla += 2) { %>
-                        <label class="btn btn-outline-primary mb-2" style="flex-basis: 30%;">
-                          <input type="radio" name="talla-<%= Producto.id %>" id="talla-<%= talla %>" value="T<%= talla %>"> T<%= talla %>
-                        </label>
-                      <% } %>
+      
+                <% if (Producto.Tipo === 'Correa') { %>
+                  <!-- Si es Correa, mostrar opciones de tallas -->
+                  <div class="tallas">
+                    <div class="form-group">
+                      <label for="talla-<%= Producto.id %>">Talla</label>
+                      <div class="btn-group-toggle d-flex flex-wrap justify-content-between" data-toggle="buttons">
+                        <% for (let talla = 30; talla <= 46; talla += 2) { %>
+                          <label class="btn btn-outline-primary mb-2" style="flex-basis: 30%;">
+                            <input type="radio" name="talla-<%= Producto.id %>" id="talla-<%= talla %>" value="T<%= talla %>"> T<%= talla %>
+                          </label>
+                        <% } %>
+                      </div>
                     </div>
                   </div>
-                </div>
+                <% } %>
+      
+                <!-- Si es Correa o Bolso, ambos deben tener campo de cantidad y botón para agregar -->
                 <form action="/Agregarcart/<%= Producto.id %>" method="POST">
                   <div class="cantidad-container">
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
@@ -64,8 +69,9 @@
               </div>
             </div>
           </div>
-        <% }) %>        
+        <% }) %>
       </div>
+      
       <div id="noProductMessage" class="text-center mt-4" style="display: none;">
         <h1>Producto no encontrado.</h1>
       </div>
