@@ -17,41 +17,61 @@
 </header>
 <div class="container">
   <div class="container espacio">
-    <div class="login-page ">
+    <div class="login-page">
       <h1>Registrar Pedido</h1>
       <br>
       <form action="/Pedido" method="POST" class="form">
-        <input type="text" name="Cliente" id="Cliente" placeholder="Nombre del cliente">
+        <!-- Campos obligatorios -->
+        <input type="text" name="Nombre" id="Nombre" placeholder="Nombre del cliente" required>
+        <input type="tel" name="Telefono" id="Telefono" placeholder="Teléfono del cliente" required>
+        <input type="text" name="Direccion" id="Direccion" placeholder="Dirección del cliente" required>
+        <input type="text" name="Ciudad" id="Ciudad" placeholder="Ciudad del cliente" required>
+        <input type="text" name="Departamento" id="Departamento" placeholder="Departamento del cliente" required>
+        
+        <!-- Método de pago con opciones -->
+        <label for="MetodoPago">Método de pago:</label>
+        <select name="MetodoPago" id="MetodoPago" required>
+          <option value="">Seleccione un método de pago</option>
+          <option value="Contra entrega">Contra entrega</option>
+          <option value="Transferencia">Transferencia</option>
+        </select>
+
+        <!-- Campos opcionales -->
         <input type="text" name="Documento" id="Documento" placeholder="Documento del cliente">
-        <input type="tel" name="Telefono" id="Telefono" placeholder="Telefono del cliente">
-        <input type="text" name="Direccion" id="Direccion" placeholder="Direccion del cliente">
         <input type="number" name="Valor" id="Valor" placeholder="Valor por correa">
-        <button type="submit">Registrar</button>
+        <input type="number" name="Descuento" id="Descuento" placeholder="Descuento (opcional)">
+
+        <button type="submit" class="btn btn-primary">Registrar</button>
         <p class="error escondido">Error en pedido</p>
       </form>
     </div>
   </div>
-      <table id="Pedidos" class="tabla table table-dark "  >
-              <thead>
-              <tr>
-                  <th scope="col">Producto</th>
-                  <th scope="col">Cantidad</th>
-                  <th scope="col">Opciones</th>
-              </tr>
-          </thead>
-          <tbody>
-            <% Pedido.forEach( (Pedido) => { %>
-              <tr>
-                  <td> <%= Pedido.Producto %></td>
-                  <td> <%= Pedido.Cantidad %></td>
-                  <td> 
-                      <a type="button" class="btnEditarUsuario btn btn-outline-primary bi bi-pencil"> </a>
-                      <a href="/borrarUsuario/<%= usuario.id %>" class="btn btn-outline-danger bi bi-trash"> </a>
-                  </td>
-              </tr>
-         <% }) %>
-          </tbody>
-      </table>
-  </div>
+
+  <table id="Pedidos" class="tabla table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">Imagen</th>
+        <th scope="col">Producto</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Talla</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% Pedido.forEach( (Pedido) => { %>
+        <tr>
+          <td><%= Pedido.Imagen %></td>
+          <td><%= Pedido.Producto %></td>
+          <td><%= Pedido.Cantidad %></td>
+          <td><%= Pedido.Talla %></td>
+          <td>
+            <a type="button" class="btnEditarUsuario btn btn-outline-primary bi bi-pencil"></a>
+            <a href="/borrarUsuario/<%= Pedido.id %>" class="btn btn-outline-danger bi bi-trash"></a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 </body>
 </html>

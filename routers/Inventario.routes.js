@@ -13,4 +13,6 @@ router.get('/EliminarProducto/:id',Inventario.eliminar,(req,res)=>{
 router.post('/EditarProducto',Inventario.editar)
 //Crear Producto
 router.post('/CrearProducto',Inventario.Crear)
+
+  
 module.exports= router

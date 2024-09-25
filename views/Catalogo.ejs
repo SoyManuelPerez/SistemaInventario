@@ -40,9 +40,10 @@
               <img src="img/Productos/<%= Producto.Imagen %>" class="card-img-top" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Producto.Producto %></h5>
+                <p class="card-text">Precio: $<%= Producto.Precio %></p> <!-- Mostrar el precio al usuario -->
       
+                <!-- Si es Correa, mostrar opciones de tallas -->
                 <% if (Producto.Tipo === 'Correa') { %>
-                  <!-- Si es Correa, mostrar opciones de tallas -->
                   <div class="tallas">
                     <div class="form-group">
                       <label for="talla-<%= Producto.id %>">Talla</label>
@@ -57,12 +58,27 @@
                   </div>
                 <% } %>
       
-                <!-- Si es Correa o Bolso, ambos deben tener campo de cantidad y botón para agregar -->
+                <!-- Formulario para agregar al carrito -->
                 <form action="/Agregarcart/<%= Producto.id %>" method="POST">
+                  <input type="hidden" name="nombre" value="<%= Producto.Producto %>">
+                  <input type="hidden" name="precio" value="<%= Producto.Precio %>"> <!-- Agregar el precio al formulario -->
                   <div class="cantidad-container">
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
                   </div>
+      
+                  <!-- Si es Correa, añadir talla seleccionada -->
+                  <% if (Producto.Tipo === 'Correa') { %>
+                    <input type="hidden" name="tipoProducto" value="Correa">
+                    <input type="hidden" name="tallaSeleccionada" id="tallaSeleccionada-<%= Producto.id %>">
+                    <script>
+                      document.querySelectorAll('input[name="talla-<%= Producto.id %>"]').forEach((radio) => {
+                        radio.addEventListener('change', function() {
+                          document.getElementById('tallaSeleccionada-<%= Producto.id %>').value = this.value;
+                        });
+                      });
+                    </script>
+                  <% } %>
                   <br>
                   <button type="submit" class="btn-agregar btn btn-primary">Agregar al pedido</button>
                 </form>
@@ -71,6 +87,7 @@
           </div>
         <% }) %>
       </div>
+      
       
       <div id="noProductMessage" class="text-center mt-4" style="display: none;">
         <h1>Producto no encontrado.</h1>

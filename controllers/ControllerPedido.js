@@ -29,3 +29,30 @@ module.exports.mostrar = (req, res) => {
     res.status(500).send('Error mostrando datos');
   });
 }
+module.exports.AgregarCart = async (req, res) => {
+  const { nombre, cantidad, precio, tipoProducto, tallaSeleccionada } = req.body;
+
+  // Definir la talla basada en el tipo de producto
+  const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
+
+  // Crear un nuevo pedido con la información del formulario
+  const nuevoPedido = new Pedido({
+    Producto: nombre,
+    Cantidad: cantidad,
+    Talla: talla,
+    Precio: precio,
+    Imagen: '' 
+  });
+
+  try {
+    // Guardar el pedido en la base de datos
+    await nuevoPedido.save();
+    console.log('Pedido guardado exitosamente:', nuevoPedido);
+    
+    // Redirigir después de guardar
+    res.redirect('/Pedido'); 
+  } catch (err) {
+    console.error('Error al guardar el pedido:', err);
+    res.status(500).send('Hubo un error al procesar el pedido');
+  }
+};
