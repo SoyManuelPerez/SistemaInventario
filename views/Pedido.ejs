@@ -20,7 +20,7 @@
     <div class="login-page">
       <h1>Registrar Pedido</h1>
       <br>
-      <form action="/Pedido" method="POST" class="form">
+      <form action="/Factura" method="POST" class="form">
         <!-- Campos obligatorios -->
         <input type="text" name="Nombre" id="Nombre" placeholder="Nombre del cliente" required>
         <input type="tel" name="Telefono" id="Telefono" placeholder="Teléfono del cliente" required>
@@ -54,6 +54,7 @@
         <th scope="col">Producto</th>
         <th scope="col">Cantidad</th>
         <th scope="col">Talla</th>
+        <th scope="col">Precio</th>
         <th scope="col">Opciones</th>
       </tr>
     </thead>
@@ -64,6 +65,7 @@
           <td><%= Pedido.Producto %></td>
           <td><%= Pedido.Cantidad %></td>
           <td><%= Pedido.Talla %></td>
+          <td><%= Pedido.Precio.toLocaleString('es-CO') %></td>
           <td>
             <a type="button" class="btnEditarUsuario btn btn-outline-primary bi bi-pencil"></a>
             <a href="/borrarUsuario/<%= Pedido.id %>" class="btn btn-outline-danger bi bi-trash"></a>

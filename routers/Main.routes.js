@@ -27,4 +27,6 @@ router.get('/Estadisticas',Estadistica.mostrar,(req,res)=>{
 router.get('/Pedido',Pedido.mostrar,(req,res)=>{
     res.render('Pedido')
 });
+router.post('/Factura',Pedido.Factura,(req,res)=>{
+});
 module.exports= router
