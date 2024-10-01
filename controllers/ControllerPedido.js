@@ -73,7 +73,7 @@ module.exports.Factura = async (req, res) => {
     // Configurar el nombre del archivo PDF
     const filename = `Pedido_${Nombre}.pdf`;
     // Establecer la cabecera para descargar el archivo
-    res.setHeader('Content-disposition', 'inline; filename=' + filename);
+    res.setHeader('Content-disposition', `attachment; filename=${filename}`);
     res.setHeader('Content-type', 'application/pdf');
     // Stream para enviar el PDF al navegador
     doc.pipe(res);
