@@ -40,34 +40,32 @@
               <img src="img/Productos/<%= Producto.Imagen %>" class="card-img-top" alt="Imagen del producto">
               <div class="card-body">
                 <h5 class="card-title"><%= Producto.Producto %></h5>
-                <p class="card-text">Precio: $<%= Producto.Precio %></p> <!-- Mostrar el precio al usuario -->
-      
-                <!-- Si es Correa, mostrar opciones de tallas -->
+                <p class="card-text">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p> 
                 <% if (Producto.Tipo === 'Correa') { %>
                   <div class="tallas">
                     <div class="form-group">
                       <label for="talla-<%= Producto.id %>">Talla</label>
                       <div class="btn-group-toggle d-flex flex-wrap justify-content-between" data-toggle="buttons">
                         <% for (let talla = 30; talla <= 46; talla += 2) { %>
-                          <label class="btn btn-outline-primary mb-2" style="flex-basis: 30%;">
-                            <input type="radio" name="talla-<%= Producto.id %>" id="talla-<%= talla %>" value="T<%= talla %>"> T<%= talla %>
-                          </label>
-                        <% } %>
+                          <div class="mb-3" style="flex-basis: 30%;">
+                            <label class="btn btn-outline-primary mb-2 w-100">
+                              <input type="radio" name="talla-<%= Producto.id %>" id="talla-<%= talla %>" value="T<%= talla %>">
+                              T<%= talla %>
+                            </label>
+                            <div class="text-center" id="Ctallas">
+                              <%= Producto['T' + talla] %>
+                            </div>
+                          </div>
+                        <% } %>                        
                       </div>
                     </div>
                   </div>
                 <% } %>
-      
-                <!-- Formulario para agregar al carrito -->
                 <form action="/Agregarcart/<%= Producto.id %>" method="POST">
-                  <input type="hidden" name="nombre" value="<%= Producto.Producto %>">
-                  <input type="hidden" name="precio" value="<%= Producto.Precio %>"> <!-- Agregar el precio al formulario -->
                   <div class="cantidad-container">
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
                   </div>
-      
-                  <!-- Si es Correa, añadir talla seleccionada -->
                   <% if (Producto.Tipo === 'Correa') { %>
                     <input type="hidden" name="tipoProducto" value="Correa">
                     <input type="hidden" name="tallaSeleccionada" id="tallaSeleccionada-<%= Producto.id %>">

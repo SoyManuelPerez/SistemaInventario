@@ -61,7 +61,7 @@
     <tbody>
       <% Pedido.forEach( (Pedido) => { %>
         <tr>
-          <td><%= Pedido.Imagen %></td>
+          <td><img src="img/Productos/<%= Pedido.Imagen %>" width="80px"></td>
           <td><%= Pedido.Producto %></td>
           <td><%= Pedido.Cantidad %></td>
           <td><%= Pedido.Talla %></td>
