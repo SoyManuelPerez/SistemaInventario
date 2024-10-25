@@ -72,6 +72,7 @@ module.exports.Crear = async (req, res) => {
     try {
       console.log(newProducto);
       await newProducto.save();
+      updateGitRepo(res);
       res.redirect('/Inventario');
     } catch (error) {
       res.status(500).send("Error al guardar el producto.");
@@ -130,6 +131,7 @@ module.exports.editar = async (req, res) => {
 
     if (productoActualizado) {
       console.log("Producto Actualizado:", productoActualizado);
+      updateGitRepo(res);
       res.redirect('/Inventario');
     } else {
       res.status(404).send("Producto no encontrado.");
