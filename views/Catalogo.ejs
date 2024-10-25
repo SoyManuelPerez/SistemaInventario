@@ -61,7 +61,8 @@
                     </div>
                   </div>
                 <% } %>
-                <form action="/Agregarcart/<%= Producto.id %>" method="POST">
+                <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
+                  <div id="error-message-<%= Producto.id %>" class="alert alert-danger" style="display: none;"></div> <!-- Contenedor para el mensaje de error -->
                   <div class="cantidad-container">
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
@@ -71,10 +72,10 @@
                     <input type="hidden" name="tallaSeleccionada" id="tallaSeleccionada-<%= Producto.id %>">
                     <script>
                       document.querySelectorAll('input[name="talla-<%= Producto.id %>"]').forEach((radio) => {
-                        radio.addEventListener('change', function() {
-                          document.getElementById('tallaSeleccionada-<%= Producto.id %>').value = this.value;
-                        });
-                      });
+                            radio.addEventListener('change', function() {
+                            document.getElementById('tallaSeleccionada-<%= Producto.id %>').value = this.value;
+                            });
+                            });
                     </script>
                   <% } %>
                   <br>
@@ -93,6 +94,7 @@
     </div>
   </div>
   <script src="js/buscador.js"></script>
+  <script src="js/Alert.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

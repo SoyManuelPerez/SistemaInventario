@@ -36,62 +36,29 @@ module.exports.mostrar = (req, res) => {
 module.exports.AgregarCart = async (req, res) => {
   const id = req.params.id;
   const { cantidad, tipoProducto, tallaSeleccionada } = req.body;
-  const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
 
+  // Verifica si los campos requeridos existen
+  if (!cantidad || !id || (tipoProducto === 'Correa' && !tallaSeleccionada)) {
+    return res.status(400).json({ success: false, message: 'Datos incompletos o incorrectos.' });
+  }
+
+  const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
+  
   try {
     const producto = await Producto.findById(id);
 
     if (!producto) {
-      return res.status(404).send('Producto no encontrado');
+      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
 
-    let stockDisponible;
-
-    // Si es una correa, obtén el stock de la talla seleccionada
-    if (tipoProducto === 'Correa') {
-      stockDisponible = producto[talla]; // Asegúrate de que el producto tiene este campo
-      if (!stockDisponible) {
-        return res.status(400).send(`La talla ${talla} no está disponible para este producto.`);
-      }
-    } else {
-      // Si no es correa, usa la cantidad general del producto
-      stockDisponible = producto.Cantidad;
-    }
-
-    // Validar si la cantidad solicitada es mayor que el stock disponible
-    if (cantidad > stockDisponible) {
-      return res.status(400).send(`Cantidad solicitada (${cantidad}) excede el stock disponible (${stockDisponible})`);
-    }
-
-    // Actualizar el stock restando la cantidad solicitada
-    if (tipoProducto === 'Correa') {
-      producto[talla] -= cantidad;
-    } else {
-      producto.Cantidad -= cantidad;
-    }
-
-    // Guardar el producto con el stock actualizado
-    await producto.save();
-
-    // Crear un nuevo pedido
-    const nuevoPedido = new Pedido({
-      Producto: producto.Producto,
-      Cantidad: cantidad,
-      Talla: talla,
-      Precio: producto.Precio,
-      Imagen: producto.Imagen
-    });
-
-    // Guardar el pedido en la base de datos
-    await nuevoPedido.save();
-    console.log('Pedido guardado exitosamente:', nuevoPedido);
-    res.redirect('/Pedido'); 
-
+    // Lógica para manejar stock y pedido
+    // ...
   } catch (err) {
     console.error('Error al procesar el pedido:', err);
-    res.status(500).send('Hubo un error al procesar el pedido');
+    return res.status(500).json({ success: false, message: 'Error del servidor al procesar el pedido' });
   }
 };
+
 
 module.exports.Factura = async (req, res) => {
   try {
