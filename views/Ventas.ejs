@@ -12,9 +12,36 @@
   <title>Ventas</title>
 </head>
 <body>
+
 <header>
   <%- include('nav'); %>
 </header>
 
+<main class="container my-5">
+  <h1 class="mb-4">Lista de Pedidos</h1>
+  <table id="Pedidos" class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Cliente</th>
+        <th scope="col">Estado</th>
+        <th scope="col">PDF</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% Producto.forEach((Producto) => { %>
+        <tr>
+          <td><%= Producto.Cliente %></td>
+          <td><%= Producto.Estado %></td>
+          <td><a href="./pdf/<%= Producto.Url %>" class="text-light" target="_blank">Pedido</a></td>
+          <td>
+            <a type="button" class="btn btn-outline-primary bi bi-pencil" aria-label="Editar"></a>
+            <button type="button" class="btn btn-outline-danger bi bi-trash" aria-label="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="<%= Producto.id %>"></button>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
 </body>
-</html
+</html>

@@ -1,4 +1,4 @@
-const Producto = require('../models/Producto')
+const Producto = require('../models/Ventas')
 const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
 const jsonwebtoken = require('jsonwebtoken');
