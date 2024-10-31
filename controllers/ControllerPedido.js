@@ -122,28 +122,19 @@ module.exports.Factura = async (req, res) => {
           `Producto: ${pedido.Producto}    Cantidad: ${cantidad}    Talla: ${pedido.Talla}    Precio: $${precio.toLocaleString('es-CO')}`,
           { continued: false }
         );
-
-        // Sumar al total
         total += precio * cantidad;
-
         doc.moveDown();
       });
     } else {
       doc.fontSize(14).text('No hay productos en el pedido.');
     }
-
-    // Calcular el total después del descuento
     total -= descuentoAplicado;
     doc.moveDown(2);
     doc.fontSize(16).text(`Total a pagar: $${total.toLocaleString('es-CO')}`, { align: 'right' });
-
-    // Finalizar la creación del documento PDF
     doc.end();
-
-    // Guardar los detalles de la venta en la colección `Ventas`
     await Venta.create({
-      NombreCliente: Nombre,
-      ArchivoPDF: filename,
+      Cliente: Nombre,
+      Url: filename,
       Estado: 'Por empacar'
     });
 

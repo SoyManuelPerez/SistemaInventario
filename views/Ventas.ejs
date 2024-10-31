@@ -33,7 +33,7 @@
         <tr>
           <td><%= Producto.Cliente %></td>
           <td><%= Producto.Estado %></td>
-          <td><a href="./pdf/<%= Producto.Url %>" class="text-light" target="_blank">Pedido</a></td>
+          <td><a href="/pdf/<%= Producto.Url %>" class="text-light" target="_blank">Pedido</a></td>
           <td>
             <a type="button" class="btn btn-outline-primary bi bi-pencil" aria-label="Editar"></a>
             <button type="button" class="btn btn-outline-danger bi bi-trash" aria-label="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="<%= Producto.id %>"></button>

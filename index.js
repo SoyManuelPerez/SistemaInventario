@@ -21,6 +21,7 @@ Inventario =  require("./routers/Inventario.routes")
 app.use(Inventario)
 app.use(Main)
 app.use(User)
+app.use('/pdf', express.static(path.join(__dirname, 'public/pdf')));
 // Servidor 
 app.set('port',process.env.PORT || 4000);
 app.listen(app.get('port'))  
