@@ -111,13 +111,13 @@ module.exports.eliminar = async (req, res) => {
 // Editar Producto
 module.exports.editarBolso = async (req, res) => {
   try {
-    const { MProducto, MCantidad, MPrecio } = req.body;
-    
+    const { MProductoBolso, MCantidadBolso, MPrecioBolso } = req.body;
+    console.log(MProductoBolso)
     const productoActualizado = await Productos.findOneAndUpdate(
-      { Producto: MProducto, Tipo: 'bolso' }, 
+      { Producto: MProductoBolso}, 
       { 
-        Cantidad: MCantidad,
-        Precio: MPrecio
+        Cantidad: MCantidadBolso,
+        Precio: MPrecioBolso
       },
       { new: true }
     ).exec();
@@ -138,19 +138,25 @@ module.exports.editarBolso = async (req, res) => {
 module.exports.editar = async (req, res) => {
   try {
     const {
-      MProducto, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
+      MProductoCorrea, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
       MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46,
-      MPrecio
+      MPrecioCorrea
     } = req.body;
 
     // Calcular la cantidad total como la suma de todas las tallas
     const cantidadTotal = 
-      (MCantidad30 || 0) + (MCantidad32 || 0) + (MCantidad34 || 0) +
-      (MCantidad36 || 0) + (MCantidad38 || 0) + (MCantidad40 || 0) +
-      (MCantidad42 || 0) + (MCantidad44 || 0) + (MCantidad46 || 0);
+         (parseInt(MCantidad30) || 0) + 
+    (parseInt(MCantidad32) || 0) + 
+    (parseInt(MCantidad34) || 0) + 
+    (parseInt(MCantidad36) || 0) + 
+    (parseInt(MCantidad38) || 0) + 
+    (parseInt(MCantidad40) || 0) + 
+    (parseInt(MCantidad42) || 0) + 
+    (parseInt(MCantidad44) || 0) + 
+    (parseInt(MCantidad46) || 0);
 
     const productoActualizado = await Productos.findOneAndUpdate(
-      { Producto: MProducto, Tipo: 'correa' },
+      { Producto: MProductoCorrea },
       {
         T30: MCantidad30,
         T32: MCantidad32,
@@ -162,7 +168,7 @@ module.exports.editar = async (req, res) => {
         T44: MCantidad44,
         T46: MCantidad46,
         Cantidad: cantidadTotal,
-        Precio: MPrecio
+        Precio: MPrecioCorrea
       },
       { new: true }
     ).exec();
