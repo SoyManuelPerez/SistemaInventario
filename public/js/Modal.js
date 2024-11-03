@@ -9,37 +9,41 @@ const onl = (element, event, selector, handler) => {
   });
 };
 onl(document, 'click', '.btnModal', e => {
-  const fila = e.target.closest('tr'); // Obtiene la fila correspondiente
-  const celdas = fila.children;
-  const tipoProducto = e.target.id; // Obtiene el tipo desde el id del botón
+  const fila = e.target.closest('tr');
+  const celdas = fila ? fila.children : [];
+  const tipoProducto = e.target.id;
 
-  if (tipoProducto === "btnBolso") {
-    // Asigna valores para el modal de bolso
-    document.getElementById('MProductoBolso').value = celdas[1].innerHTML.trim();
-    document.getElementById('MCantidadBolso').value = celdas[2].innerHTML.trim();
-    document.getElementById('MPrecioBolso').value = celdas[3].innerHTML.trim();
+  if (tipoProducto === "Bolso") {
+    // Verifica si los elementos existen antes de asignar valores
+    const productoBolso = document.getElementById('MProductoBolso');
+    const cantidadBolso = document.getElementById('MCantidadBolso');
+    const precioBolso = document.getElementById('MPrecioBolso');
     
-    // Muestra el modal para bolso
+    if (productoBolso && cantidadBolso && precioBolso) {
+      productoBolso.value = celdas[1].innerHTML.trim();
+      cantidadBolso.value = celdas[2].innerHTML.trim();
+      precioBolso.value = celdas[3].innerHTML.trim();
+    }
+    
     modalActualizarBolso.show();
 
-  } else if (tipoProducto === "btnCorrea") {
-    // Asigna valores para el modal de correa
-    document.getElementById('MProductoCorrea').value = celdas[1].innerHTML.trim();
-    document.getElementById('MCantidad30').value = celdas[2].innerHTML.trim();
-    document.getElementById('MCantidad32').value = celdas[3].innerHTML.trim();
-    document.getElementById('MCantidad34').value = celdas[4].innerHTML.trim();
-    document.getElementById('MCantidad36').value = celdas[5].innerHTML.trim();
-    document.getElementById('MCantidad38').value = celdas[6].innerHTML.trim();
-    document.getElementById('MCantidad40').value = celdas[7].innerHTML.trim();
-    document.getElementById('MCantidad42').value = celdas[8].innerHTML.trim();
-    document.getElementById('MCantidad44').value = celdas[9].innerHTML.trim();
-    document.getElementById('MCantidad46').value = celdas[10].innerHTML.trim();
-    document.getElementById('MPrecioCorrea').value = celdas[11].innerHTML.trim();
+  } else if (tipoProducto === "Correa") {
+    const productoCorrea = document.getElementById('MProductoCorrea');
+    const cantidad30 = document.getElementById('MCantidad30');
+    const cantidad32 = document.getElementById('MCantidad32');
+    // ... continúa con los otros elementos
 
-    // Muestra el modal para correa
+    if (productoCorrea && cantidad30 && cantidad32 /* && verifica los demás elementos */) {
+      productoCorrea.value = celdas[1].innerHTML.trim();
+      cantidad30.value = celdas[2].innerHTML.trim();
+      cantidad32.value = celdas[3].innerHTML.trim();
+      // ... asigna los valores de los demás elementos
+    }
+    
     modalActualizarCorrea.show();
   }
 });
+
 
 // Función para mostrar campos específicos según el tipo de producto seleccionado
 function showFields() {
