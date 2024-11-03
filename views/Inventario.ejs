@@ -158,61 +158,93 @@
     </div>
     
     <br>
-    <div id="modalAactualizar" class="modal fade" tabindex="-1" aria-labelledby="modalAactualizar" aria-hidden="true">
+    <!-- Modal editar correas -->
+    <div id="modalActualizarCorrea" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarCorrea" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title" id="exampleModalLabel">Actualizar Producto</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Actualizar Correa</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <form action="/EditarProducto" method="POST" class="form">
-              <input type="text" name="MProducto" id="MProducto" placeholder="Nombre del producto" >
-              <label for="">Cantidad por talla</label>
+            <form action="/EditarCorrea" method="POST" class="form">
+              <input type="text" name="MProducto" id="MProducto" placeholder="Nombre del producto" required>
+    
+              <label for="cantidadPorTalla">Cantidad por talla</label>
               <div class="tallas-container">
                 <div class="talla-item">
                   <p>30</p>
-                  <input type="number" name="MCantidad30" id="MCantidad30" min="0">
+                  <input type="number" name="MCantidad30" id="MCantidad30" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>32</p>
-                  <input type="number" name="MCantidad32" id="MCantidad32" min="0">
+                  <input type="number" name="MCantidad32" id="MCantidad32" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>34</p>
-                  <input type="number" name="MCantidad34" id="MCantidad34" min="0">
+                  <input type="number" name="MCantidad34" id="MCantidad34" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>36</p>
-                  <input type="number" name="MCantidad36" id="MCantidad36" min="0">
+                  <input type="number" name="MCantidad36" id="MCantidad36" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>38</p>
-                  <input type="number" name="MCantidad38" id="MCantidad38" min="0">
+                  <input type="number" name="MCantidad38" id="MCantidad38" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>40</p>
-                  <input type="number" name="MCantidad40" id="MCantidad40" min="0">
+                  <input type="number" name="MCantidad40" id="MCantidad40" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>42</p>
-                  <input type="number" name="MCantidad42" id="MCantidad42" min="0">
+                  <input type="number" name="MCantidad42" id="MCantidad42" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>44</p>
-                  <input type="number" name="MCantidad44" id="MCantidad44" min="0">
+                  <input type="number" name="MCantidad44" id="MCantidad44" min="0" value="0">
                 </div>
                 <div class="talla-item">
                   <p>46</p>
-                  <input type="number" name="MCantidad46" id="MCantidad46" min="0">
+                  <input type="number" name="MCantidad46" id="MCantidad46" min="0" value="0">
                 </div>
               </div>
-              <button type="submit">Actualizar</button>
+    
+              <label for="MPrecio">Precio</label>
+              <input type="number" name="MPrecio" id="MPrecio" min="0" step="0.01" required>
+              
+              <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
             </form>
           </div>
         </div>
       </div>
     </div>
+    
+    <!-- Modal editar Bolsos -->
+    <div id="modalActualizarBolso" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarBolso" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="exampleModalLabel">Actualizar Bolso</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/EditarBolso" method="POST" class="form">
+              <input type="text" name="MProducto" id="MProducto" placeholder="Nombre del producto" required>
+              
+              <label for="MCantidad">Cantidad</label>
+              <input type="number" name="MCantidad" id="MCantidad" min="0" required>
+              
+              <label for="MPrecio">Precio</label>
+              <input type="number" name="MPrecio" id="MPrecio" min="0" step="0.01" required>
+              
+              <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 </body>
 <script>
   $(document).ready(function() {

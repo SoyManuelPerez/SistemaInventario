@@ -81,8 +81,6 @@ module.exports.Crear = async (req, res) => {
   });
 };
 
-
-
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
   try {
@@ -111,11 +109,48 @@ module.exports.eliminar = async (req, res) => {
 };
 
 // Editar Producto
+module.exports.editarBolso = async (req, res) => {
+  try {
+    const { MProducto, MCantidad, MPrecio } = req.body;
+    
+    const productoActualizado = await Productos.findOneAndUpdate(
+      { Producto: MProducto, Tipo: 'bolso' }, 
+      { 
+        Cantidad: MCantidad,
+        Precio: MPrecio
+      },
+      { new: true }
+    ).exec();
+
+    if (productoActualizado) {
+      console.log("Bolso Actualizado:", productoActualizado);
+      updateGitRepo(res);
+      res.redirect('/Inventario');
+    } else {
+      res.status(404).send("Producto tipo bolso no encontrado.");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error al actualizar el producto tipo bolso.");
+  }
+};
+
 module.exports.editar = async (req, res) => {
   try {
-    const { MProducto, MCantidad30, MCantidad32, MCantidad34, MCantidad36, MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46 } = req.body;
+    const {
+      MProducto, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
+      MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46,
+      MPrecio
+    } = req.body;
+
+    // Calcular la cantidad total como la suma de todas las tallas
+    const cantidadTotal = 
+      (MCantidad30 || 0) + (MCantidad32 || 0) + (MCantidad34 || 0) +
+      (MCantidad36 || 0) + (MCantidad38 || 0) + (MCantidad40 || 0) +
+      (MCantidad42 || 0) + (MCantidad44 || 0) + (MCantidad46 || 0);
+
     const productoActualizado = await Productos.findOneAndUpdate(
-      { Producto: MProducto }, 
+      { Producto: MProducto, Tipo: 'correa' },
       {
         T30: MCantidad30,
         T32: MCantidad32,
@@ -125,23 +160,25 @@ module.exports.editar = async (req, res) => {
         T40: MCantidad40,
         T42: MCantidad42,
         T44: MCantidad44,
-        T46: MCantidad46
-      }
+        T46: MCantidad46,
+        Cantidad: cantidadTotal,
+        Precio: MPrecio
+      },
+      { new: true }
     ).exec();
 
     if (productoActualizado) {
-      console.log("Producto Actualizado:", productoActualizado);
+      console.log("Correa Actualizada:", productoActualizado);
       updateGitRepo(res);
       res.redirect('/Inventario');
     } else {
-      res.status(404).send("Producto no encontrado.");
+      res.status(404).send("Producto tipo correa no encontrado.");
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error al actualizar el producto.");
+    res.status(500).send("Error al actualizar el producto tipo correa.");
   }
 };
-
 
 // Mostrar productos en Inventario
 module.exports.mostrarInventario = async (req, res) => {
