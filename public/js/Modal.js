@@ -1,31 +1,20 @@
-const modalActualizarBolso = new bootstrap.Modal(document.getElementById('modalActualizarBolso'));
-const modalActualizarCorrea = new bootstrap.Modal(document.getElementById('modalActualizarCorrea'));
-
-const onl = (element, event, selector, handler) => {
-  element.addEventListener(event, e => {
-    if (e.target.closest(selector)) {
-      handler(e);
-    }
-  });
-};
-
 onl(document, 'click', '.btnModal', e => {
   const fila = e.target.closest('tr'); // Obtiene la fila correspondiente
   const celdas = fila.children;
-  const tipoProducto = celdas[11].innerHTML.trim(); // Suponiendo que la columna 11 contiene el tipo de producto
+  const tipoProducto = e.target.id; // Obtiene el tipo desde el id del botón
 
-  if (tipoProducto === "Bolso") {
+  if (tipoProducto === "btnBolso") {
     // Asigna valores para el modal de bolso
-    document.getElementById('MProducto').value = celdas[1].innerHTML.trim();
-    document.getElementById('MCantidad').value = celdas[2].innerHTML.trim();
-    document.getElementById('MPrecio').value = celdas[3].innerHTML.trim();
+    document.getElementById('MProductoBolso').value = celdas[1].innerHTML.trim();
+    document.getElementById('MCantidadBolso').value = celdas[2].innerHTML.trim();
+    document.getElementById('MPrecioBolso').value = celdas[3].innerHTML.trim();
     
     // Muestra el modal para bolso
     modalActualizarBolso.show();
 
-  } else if (tipoProducto === "Correa") {
+  } else if (tipoProducto === "btnCorrea") {
     // Asigna valores para el modal de correa
-    document.getElementById('MProducto').value = celdas[1].innerHTML.trim();
+    document.getElementById('MProductoCorrea').value = celdas[1].innerHTML.trim();
     document.getElementById('MCantidad30').value = celdas[2].innerHTML.trim();
     document.getElementById('MCantidad32').value = celdas[3].innerHTML.trim();
     document.getElementById('MCantidad34').value = celdas[4].innerHTML.trim();
@@ -35,7 +24,7 @@ onl(document, 'click', '.btnModal', e => {
     document.getElementById('MCantidad42').value = celdas[8].innerHTML.trim();
     document.getElementById('MCantidad44').value = celdas[9].innerHTML.trim();
     document.getElementById('MCantidad46').value = celdas[10].innerHTML.trim();
-    document.getElementById('MPrecio').value = celdas[3].innerHTML.trim();
+    document.getElementById('MPrecioCorrea').value = celdas[11].innerHTML.trim();
 
     // Muestra el modal para correa
     modalActualizarCorrea.show();
