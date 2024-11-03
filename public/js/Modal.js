@@ -1,3 +1,13 @@
+const modalActualizarBolso = new bootstrap.Modal(document.getElementById('modalActualizarBolso'));
+const modalActualizarCorrea = new bootstrap.Modal(document.getElementById('modalActualizarCorrea'));
+
+const onl = (element, event, selector, handler) => {
+  element.addEventListener(event, e => {
+    if (e.target.closest(selector)) {
+      handler(e);
+    }
+  });
+};
 onl(document, 'click', '.btnModal', e => {
   const fila = e.target.closest('tr'); // Obtiene la fila correspondiente
   const celdas = fila.children;
