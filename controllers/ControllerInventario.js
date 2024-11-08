@@ -96,12 +96,29 @@ module.exports.PDF = async (req, res) => {
 
     doc.pipe(res);
 
-    productos.filter(p => p.Cantidad > 0).forEach(producto => {
+    let productoCount = 0;
+
+    productos.filter(p => p.Cantidad > 0).forEach((producto, index) => {
+      if (productoCount === 6) {
+        doc.addPage();
+        productoCount = 0; 
+      }
+
       const imagePath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagen);
-      doc.image(imagePath, { width: 100, align: 'left' });
-      doc.text(producto.Producto, { align: 'right' });
-      doc.text(`Precio: ${producto.Precio.toLocaleString('es-CO')}`, { align: 'right' });
-      doc.moveDown(6); 
+      doc.image(imagePath, { width: 90, align: 'left' });
+
+      // Estilo de texto para el nombre del producto (negrita y tamaño mayor)
+      doc.fontSize(14).font('Helvetica-Bold').text(producto.Producto, { align: 'right' });
+      
+      // Estilo normal para el precio
+      doc.fontSize(12).font('Helvetica').text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+
+      // Línea separadora y espaciado
+      doc.moveDown(5);
+      doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('black').stroke();
+      doc.moveDown(1);
+
+      productoCount++;
     });
 
     doc.end();
@@ -110,6 +127,8 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
+
+
 
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
