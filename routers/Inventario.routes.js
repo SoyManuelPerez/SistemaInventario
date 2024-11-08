@@ -9,6 +9,8 @@ router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
 router.get('/EliminarProducto/:id',Inventario.eliminar,(req,res)=>{
     res.render('Inventario')
 })
+router.get('/descargarPDF',Inventario.PDF,(req,res)=>{
+})
 //Editar Producto
 router.post('/EditarCorrea',Inventario.editar)
 router.post('/EditarBolso',Inventario.editarBolso)

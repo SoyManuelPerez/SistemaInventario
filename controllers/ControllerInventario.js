@@ -1,4 +1,5 @@
 const Productos = require('../models/Producto');
+const PDFDocument = require('pdfkit');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -79,6 +80,35 @@ module.exports.Crear = async (req, res) => {
       console.log(error);
     }
   });
+};
+//PDF
+module.exports.PDF = async (req, res) => {
+  try {
+    const tabla = req.query.tabla;
+    const tipo = tabla === 'inventarioCorreas' ? 'Correa' : 'Bolso';
+
+    // Filtra los productos según el tipo de tabla
+    const productos = await Productos.find({ Tipo: tipo });
+
+    const doc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${tabla}.pdf`);
+
+    doc.pipe(res);
+
+    productos.filter(p => p.Cantidad > 0).forEach(producto => {
+      const imagePath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagen);
+      doc.image(imagePath, { width: 100, align: 'left' });
+      doc.text(producto.Producto, { align: 'right' });
+      doc.text(`Precio: ${producto.Precio.toLocaleString('es-CO')}`, { align: 'right' });
+      doc.moveDown(6); 
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error("Error al generar el PDF:", error);
+    res.status(500).send("Error al generar el PDF");
+  }
 };
 
 // Eliminar Producto
