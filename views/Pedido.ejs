@@ -67,8 +67,7 @@
           <td><%= Pedido.Talla %></td>
           <td><%= Pedido.Precio.toLocaleString('es-CO') %></td>
           <td>
-            <a type="button" class="btnEditarUsuario btn btn-outline-primary bi bi-pencil"></a>
-            <a href="/borrarUsuario/<%= Pedido.id %>" class="btn btn-outline-danger bi bi-trash"></a>
+            <a href="/EliminarPedido/<%= Pedido.id %>" class="btn btn-outline-danger bi bi-trash"></a>
           </td>
         </tr>
       <% }) %>

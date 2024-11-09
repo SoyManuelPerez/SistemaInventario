@@ -18,6 +18,7 @@ router.post('/Agregarcart/:id',Pedido.AgregarCart);
 router.get('/Pedido',Pedido.mostrar,(req,res)=>{
     res.render('Pedido')
 });
+router.get('/EliminarPedido/:id',Pedido.eliminarPedido)
 router.get('/Ventas',Ventas.mostrar,(req,res)=>{
     res.render('Ventas')
 });

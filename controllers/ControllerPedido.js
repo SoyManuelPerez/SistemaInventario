@@ -35,32 +35,6 @@ module.exports.mostrar = (req, res) => {
     res.status(500).send('Error mostrando datos');
   });
 }
-module.exports.AgregarCart = async (req, res) => {
-  const id = req.params.id;
-  const { cantidad, tipoProducto, tallaSeleccionada } = req.body;
-
-  // Verifica si los campos requeridos existen
-  if (!cantidad || !id || (tipoProducto === 'Correa' && !tallaSeleccionada)) {
-    return res.status(400).json({ success: false, message: 'Datos incompletos o incorrectos.' });
-  }
-
-  const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
-  
-  try {
-    const producto = await Producto.findById(id);
-
-    if (!producto) {
-      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
-    }
-
-    // Lógica para manejar stock y pedido
-    // ...
-  } catch (err) {
-    console.error('Error al procesar el pedido:', err);
-    return res.status(500).json({ success: false, message: 'Error del servidor al procesar el pedido' });
-  }
-};
-
 module.exports.Factura = async (req, res) => {
   try {
     // Obtener los pedidos de la base de datos
@@ -149,6 +123,90 @@ module.exports.Factura = async (req, res) => {
   }
 };
 
+module.exports.AgregarCart = async (req, res) => {
+  const id = req.params.id;
+  let { cantidad, tipoProducto, tallaSeleccionada } = req.body;
+
+  cantidad = parseInt(cantidad, 10);
+  if (isNaN(cantidad) || cantidad <= 0) {
+    return res.status(400).json({ success: false, message: 'Cantidad inválida. Por favor ingresa un número válido mayor a 0.' });
+  }
+
+  const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
+
+  try {
+    const producto = await Producto.findById(id);
+    if (!producto) {
+      return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+    }
+
+    let stockDisponible = tipoProducto === 'Correa' ? producto[talla] : producto.Cantidad;
+    if (!stockDisponible) {
+      return res.status(400).json({ success: false, message: `La talla ${talla} no está disponible.` });
+    }
+
+    if (cantidad > stockDisponible) {
+      return res.status(400).json({ success: false, message: `Cantidad solicitada (${cantidad}) excede el stock disponible (${stockDisponible})` });
+    }
+
+    if (tipoProducto === 'Correa') {
+      producto[talla] -= cantidad;
+    } else {
+      producto.Cantidad -= cantidad;
+    }
+    await producto.save();
+
+    const nuevoPedido = new Pedido({
+      Producto: producto.Producto,
+      Cantidad: cantidad,
+      Talla: talla,
+      Precio: producto.Precio,
+      Imagen: producto.Imagen
+    });
+    await nuevoPedido.save();
+    
+    res.json({ success: true, message: 'Producto agregado al pedido con éxito.' });
+  } catch (err) {
+    console.error('Error al procesar el pedido:', err);
+    res.status(500).json({ success: false, message: 'Hubo un error al procesar el pedido' });
+  }
+};
+
+module.exports.eliminarPedido = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const pedido = await Pedido.findById(id);
+    if (!pedido) {
+      console.log("Pedido no encontrado.");
+      return res.status(404).redirect('/Pedido');
+    }
+    
+    const { Producto: nombreProducto, Cantidad, Talla } = pedido;
+    
+    await Pedido.findByIdAndDelete(id);
+    console.log("Pedido eliminado:", pedido);
+
+    const producto = await Producto.findOne({ Producto: nombreProducto.trim() });
+    if (!producto) {
+      console.log("Producto no encontrado en la colección Producto.");
+      return res.status(404).redirect('/Pedido');
+    }
+
+    if (Talla && Talla !== 'N/A') {
+      producto[Talla] += Cantidad;
+    } else {
+      producto.Cantidad += Cantidad;
+    }
+    
+    await producto.save();
+
+    res.redirect('/Pedido');
+  } catch (error) {
+    console.error("Error al eliminar el pedido:", error);
+    res.status(500).send("Hubo un error al procesar la eliminación del pedido");
+  }
+};
 /// Función para ejecutar comandos de Git
 function runGitCommand(command, callback) {
   exec(command, (err, stdout, stderr) => {
@@ -255,3 +313,4 @@ function configureGitRemote(callback) {
     callback(err);
   });
 }
+
