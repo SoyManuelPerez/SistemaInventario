@@ -12,20 +12,15 @@ function descargarPDF(tablaId) {
       return response.blob();
     })
     .then(blob => {
-      // Crea un enlace para descargar el archivo
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${tablaId}.pdf`;
       a.click();
-
-      // Oculta el mensaje de carga después de la descarga
       document.getElementById('mensajeCarga').style.display = 'none';
     })
     .catch(error => {
       console.error("Error al descargar el PDF:", error);
-
-      // Muestra mensaje de error y oculta el mensaje de carga
       document.getElementById('mensajeCarga').style.display = 'none';
       document.getElementById('mensajeError').style.display = 'block';
     });

@@ -127,9 +127,6 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
-
-
-
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
   try {
