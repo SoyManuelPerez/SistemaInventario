@@ -158,7 +158,6 @@ module.exports.eliminar = async (req, res) => {
 module.exports.editarBolso = async (req, res) => {
   try {
     const { MProductoBolso, MCantidadBolso, MPrecioBolso } = req.body;
-    console.log(MProductoBolso)
     const productoActualizado = await Productos.findOneAndUpdate(
       { Producto: MProductoBolso}, 
       { 
