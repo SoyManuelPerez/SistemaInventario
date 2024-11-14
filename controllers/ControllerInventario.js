@@ -17,21 +17,17 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   }
 });
-
 const upload = multer({ storage });
-
 // Crear Producto
 module.exports.Crear = async (req, res) => {
-  upload.single('Imagen')(req, res, async function (err) {
+  upload.array('Imagen', 5)(req, res, async function (err) {
     if (err) {
-      return res.status(500).send("Error al subir la imagen.");
+      return res.status(500).send("Error al subir las imágenes.");
     }
 
-    // Capturar datos del formulario
     const { Producto, Precio, Tipo, CantidadBolso, Cantidad30, Cantidad32, Cantidad34, Cantidad36, Cantidad38, Cantidad40, Cantidad42, Cantidad44, Cantidad46 } = req.body;
-    const Imagen = req.file ? req.file.filename : '';
+    const Imagenes = req.files ? req.files.map(file => file.filename) : [];
 
-    // Lógica para manejar los tipos de producto
     let cantidades = {};
     if (Tipo === 'Correa') {
       const cantidadTotal = 
@@ -61,12 +57,11 @@ module.exports.Crear = async (req, res) => {
       cantidades = { Cantidad: Number(CantidadBolso) };
     }
 
-    // Crear el objeto del nuevo producto
     const newProducto = new Productos({
       Producto,
       Precio,
       Tipo,
-      Imagen,
+      Imagenes,
       ...cantidades
     });
 
@@ -81,6 +76,7 @@ module.exports.Crear = async (req, res) => {
     }
   });
 };
+
 //PDF
 module.exports.PDF = async (req, res) => {
   try {
@@ -153,27 +149,43 @@ module.exports.eliminar = async (req, res) => {
     res.status(500).send("Error al eliminar el producto.");
   }
 };
-
 // Editar Producto
+const uploadImages = (req, res, callback) => {
+  upload.array('Imagen', 5)(req, res, function (err) {
+    if (err) {
+      return res.status(500).send("Error al subir las imágenes.");
+    }
+    const Imagenes = req.files ? req.files.map(file => `img/Productos/${file.filename}`) : [];
+    callback(Imagenes);
+  });
+};
+
 module.exports.editarBolso = async (req, res) => {
   try {
-    const { MProductoBolso, MCantidadBolso, MPrecioBolso } = req.body;
-    const productoActualizado = await Productos.findOneAndUpdate(
-      { Producto: MProductoBolso}, 
-      { 
+    uploadImages(req, res, async (Imagenes) => {
+      const { id, MProductoBolso, MCantidadBolso, MPrecioBolso } = req.body;
+      
+      const updateData = {
+        Producto: MProductoBolso,
         Cantidad: MCantidadBolso,
         Precio: MPrecioBolso
-      },
-      { new: true }
-    ).exec();
+      };
 
-    if (productoActualizado) {
-      console.log("Bolso Actualizado:", productoActualizado);
-      updateGitRepo(res);
-      res.redirect('/Inventario');
-    } else {
-      res.status(404).send("Producto tipo bolso no encontrado.");
-    }
+      // Solo agregar imágenes si existen
+      if (Imagenes.length > 0) {
+        updateData.Imagenes = Imagenes;
+      }
+
+      const productoActualizado = await Productos.findByIdAndUpdate(id, updateData, { new: true });
+
+      if (productoActualizado) {
+        console.log("Bolso Actualizado:", productoActualizado);
+        updateGitRepo(res);
+        res.redirect('/Inventario');
+      } else {
+        res.status(404).send("Producto tipo bolso no encontrado.");
+      }
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error al actualizar el producto tipo bolso.");
@@ -182,27 +194,25 @@ module.exports.editarBolso = async (req, res) => {
 
 module.exports.editar = async (req, res) => {
   try {
-    const {
-      MProductoCorrea, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
-      MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46,
-      MPrecioCorrea
-    } = req.body;
+    uploadImages(req, res, async (Imagenes) => {
+      const {
+        id, MProductoCorrea, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
+        MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46, MPrecioCorrea
+      } = req.body;
 
-    // Calcular la cantidad total como la suma de todas las tallas
-    const cantidadTotal = 
-         (parseInt(MCantidad30) || 0) + 
-    (parseInt(MCantidad32) || 0) + 
-    (parseInt(MCantidad34) || 0) + 
-    (parseInt(MCantidad36) || 0) + 
-    (parseInt(MCantidad38) || 0) + 
-    (parseInt(MCantidad40) || 0) + 
-    (parseInt(MCantidad42) || 0) + 
-    (parseInt(MCantidad44) || 0) + 
-    (parseInt(MCantidad46) || 0);
+      const cantidadTotal = 
+        (parseInt(MCantidad30) || 0) + 
+        (parseInt(MCantidad32) || 0) + 
+        (parseInt(MCantidad34) || 0) + 
+        (parseInt(MCantidad36) || 0) + 
+        (parseInt(MCantidad38) || 0) + 
+        (parseInt(MCantidad40) || 0) + 
+        (parseInt(MCantidad42) || 0) + 
+        (parseInt(MCantidad44) || 0) + 
+        (parseInt(MCantidad46) || 0);
 
-    const productoActualizado = await Productos.findOneAndUpdate(
-      { Producto: MProductoCorrea },
-      {
+      const updateData = {
+        Producto: MProductoCorrea,
         T30: MCantidad30,
         T32: MCantidad32,
         T34: MCantidad34,
@@ -214,17 +224,22 @@ module.exports.editar = async (req, res) => {
         T46: MCantidad46,
         Cantidad: cantidadTotal,
         Precio: MPrecioCorrea
-      },
-      { new: true }
-    ).exec();
+      };
 
-    if (productoActualizado) {
-      console.log("Correa Actualizada:", productoActualizado);
-      updateGitRepo(res);
-      res.redirect('/Inventario');
-    } else {
-      res.status(404).send("Producto tipo correa no encontrado.");
-    }
+      if (Imagenes.length > 0) {
+        updateData.Imagenes = Imagenes;
+      }
+
+      const productoActualizado = await Productos.findByIdAndUpdate(id, updateData, { new: true });
+
+      if (productoActualizado) {
+        console.log("Correa Actualizada:", productoActualizado);
+        updateGitRepo(res);
+        res.redirect('/Inventario');
+      } else {
+        res.status(404).send("Producto tipo correa no encontrado.");
+      }
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error al actualizar el producto tipo correa.");
@@ -258,7 +273,6 @@ module.exports.mostrarInventario = async (req, res) => {
     res.status(500).send('Error mostrando datos');
   });
 };
-
 /// Función para ejecutar comandos de Git
 function runGitCommand(command, callback) {
   exec(command, (err, stdout, stderr) => {
@@ -273,7 +287,6 @@ function runGitCommand(command, callback) {
     callback(null, stdout);
   });
 }
-
 // Función para configurar el usuario de Git
 function configureGitUser(callback) {
   const command = 'git config --global user.email "Soy_ManuelPerez@outlook.com" && git config --global user.name "SoyManuelPerez"';

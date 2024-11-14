@@ -12,17 +12,19 @@ onl(document, 'click', '.btnModal', e => {
   const fila = e.target.closest('tr');
   const celdas = Array.from(fila.children); 
   const tipoProducto = e.target.id;
-  if (tipoProducto === "Bolso") {
+  const productoID = fila.getAttribute('data-id');
+  if (tipoProducto === "Bolso" || tipoProducto === "Accesorios" ) {
+    document.getElementById('MProductoBolsoID').value = productoID;
     const productoBolso = document.getElementById('MProductoBolso');
     const cantidadBolso = document.getElementById('MCantidadBolso');
     const precioBolso = document.getElementById('MPrecioBolso');
-
       productoBolso.value = celdas[1].innerHTML.trim();
       cantidadBolso.value = celdas[2].innerHTML.trim();
       precioBolso.value = celdas[3].innerHTML.trim();
       modalActualizarBolso.show();
     
   } else if (tipoProducto === "Correa") {
+    document.getElementById('MProductoCorreaID').value = productoID;
     const productoCorrea = document.getElementById('MProductoCorrea');
     const cantidad30 = document.getElementById('MCantidad30');
     const cantidad32 = document.getElementById('MCantidad32');
@@ -47,19 +49,21 @@ onl(document, 'click', '.btnModal', e => {
       cantidad46.value = celdas[10].innerHTML.trim();
       precioCorrea.value = celdas[12].innerHTML.trim(); 
       modalActualizarCorrea.show();
-    } 
+    }
 });
 
-// Función para mostrar campos específicos según el tipo de producto seleccionado
+
 function showFields() {
   const tipo = document.getElementById("Tipo").value;
   const correasSection = document.getElementById("correas-section");
   const bolsoSection = document.getElementById("bolso-section");
-  
+
+  console.log("Seleccionado: ", tipo);
+
   if (tipo === "Correa") {
     correasSection.style.display = "block";
     bolsoSection.style.display = "none";
-  } else if (tipo === "Bolso") {
+  } else if (tipo === "Accesorios" || tipo === "Bolso") {
     correasSection.style.display = "none";
     bolsoSection.style.display = "block";
   } else {
@@ -68,8 +72,6 @@ function showFields() {
   }
 }
 
-// Ocultar secciones al cargar la página
 document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("correas-section").style.display = "none";
-  document.getElementById("bolso-section").style.display = "none";
+  showFields();
 });

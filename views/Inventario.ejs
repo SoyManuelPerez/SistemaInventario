@@ -19,15 +19,16 @@
       <h1>Crear Producto</h1>
       <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
         <input type="text" name="Producto" placeholder="Nombre del producto" required>
-
-        <select name="Tipo" class="form-select" required onchange="showFields()">
+      
+        <select name="Tipo" id="Tipo" class="form-select" required onchange="showFields()">
           <option value="">Categoria</option>
           <option value="Correa">Correa</option>
           <option value="Bolso">Bolso</option>
+          <option value="Accesorios">Accesorios</option>
         </select>
-
+      
         <input type="number" name="Precio" placeholder="Precio del producto" required>
-
+      
         <div id="correas-section" style="display: none;">
           <label>Cantidad por talla</label>
           <div class="tallas-container">
@@ -39,13 +40,13 @@
             <% }); %>
           </div>
         </div>
-
+      
         <div id="bolso-section" style="display: none;">
           <label for="CantidadBolso">Cantidad</label>
           <input type="number" name="CantidadBolso" min="0" value="0">
         </div>
-
-        <input type="file" name="Imagen" accept="image/*" required>
+      
+        <input type="file" name="Imagen" accept="image/*" multiple required>
         <button type="submit">Crear</button>
       </form>
     </div>
@@ -79,8 +80,26 @@
         </thead>
         <tbody>
           <% Productos.filter(p => p.Tipo === 'Correa').forEach(producto => { %>
-            <tr>
-              <td><img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
+            <tr data-id="<%= producto.id %>">
+              <td>     
+                <div id="carousel-<%= producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                    <% producto.Imagenes.forEach((imagen, index) => { %>
+                      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                        <img src="img/Productos/<%= imagen %>" class="d-block w-100" width="80px" alt="Imagen del producto">
+                      </div>
+                    <% }) %>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+              </td>
               <td><%= producto.Producto %></td>
               <% [producto.T30, producto.T32, producto.T34, producto.T36, producto.T38, producto.T40, producto.T42, producto.T44, producto.T46].forEach(t => { %>
                 <td><%= t %></td>
@@ -116,8 +135,26 @@
         </thead>
         <tbody>
           <% Productos.filter(p => p.Tipo === 'Bolso').forEach(producto => { %>
-            <tr>
-              <td><img src="../img/Productos/<%= producto.Imagen %>" width="80px" alt=""></td>
+            <tr data-id="<%= producto.id %>">
+              <td>
+                <div id="carousel-<%= producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                    <% producto.Imagenes.forEach((imagen, index) => { %>
+                      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                        <img src="img/Productos/<%= imagen %>" class="d-block w-80" width="90px" alt="Imagen del producto">
+                      </div>
+                    <% }) %>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+              </td>
               <td><%= producto.Producto %></td>
               <td><%= producto.Cantidad %></td>
               <td><%= producto.Precio.toLocaleString('es-CO') %></td>
@@ -131,52 +168,68 @@
       </table>
     </div>
 
-    <!-- Modal para editar Correas -->
-    <div id="modalActualizarCorrea" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarCorreaLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title">Actualizar Correa</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <form action="/EditarCorrea" method="POST">
-              <input type="text" name="MProductoCorrea" id="MProductoCorrea" placeholder="Nombre del producto" required>
-              <div class="tallas-container">
-                <% [30, 32, 34, 36, 38, 40, 42, 44, 46].forEach(t => { %>
-                  <div class="talla-item">
-                    <p><%= t %></p>
-                    <input type="number" name="MCantidad<%= t %>" id="MCantidad<%= t %>" min="0" value="0">
-                  </div>
-                <% }); %>
-              </div>
-              <input type="number" name="MPrecioCorrea" id="MPrecioCorrea" placeholder="Precio" min="0" step="0.01" required>
-              <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
-            </form>
-          </div>
-        </div>
+<!-- Modal para editar Correas -->
+<div id="modalActualizarCorrea" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarCorreaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Actualizar Correa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-    </div>
+      <div class="modal-body">
+        <form action="/EditarCorrea" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="id" id="MProductoCorreaID">
+          <input type="text" name="MProductoCorrea" id="MProductoCorrea" placeholder="Nombre del producto" required>
 
-    <!-- Modal para editar Bolsos -->
-    <div id="modalActualizarBolso" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarBolsoLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-primary text-white">
-            <h5 class="modal-title">Actualizar Bolso</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <div class="tallas-container">
+            <% [30, 32, 34, 36, 38, 40, 42, 44, 46].forEach(t => { %>
+              <div class="talla-item">
+                <p><%= t %></p>
+                <input type="number" name="MCantidad<%= t %>" id="MCantidad<%= t %>" min="0" value="0">
+              </div>
+            <% }); %>
           </div>
-          <div class="modal-body">
-            <form action="/EditarBolso" method="POST">
-              <input type="text" name="MProductoBolso" id="MProductoBolso" placeholder="Nombre del producto" required>
-              <input type="number" name="MCantidadBolso" id="MCantidadBolso" placeholder="Cantidad" min="0" required>
-              <input type="number" name="MPrecioBolso" id="MPrecioBolso" placeholder="Precio" min="0" step="0.01" required>
-              <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
-            </form>
+
+          <input type="number" name="MPrecioCorrea" id="MPrecioCorrea" placeholder="Precio" min="0" step="0.01" required>
+          <div class="mb-3">
+            <label for="MImagenCorrea" class="form-label">Actualizar imagen</label>
+            <input type="file" name="MImagenCorrea" id="MImagenCorrea" accept="image/*">
           </div>
-        </div>
+
+          <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal para editar Bolsos -->
+<div id="modalActualizarBolso" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarBolsoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Actualizar Bolso</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/EditarBolso" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="id" id="MProductoBolsoID">
+          <input type="text" name="MProductoBolso" id="MProductoBolso" placeholder="Nombre del producto" required>
+          <input type="number" name="MCantidadBolso" id="MCantidadBolso" placeholder="Cantidad" min="0" required>
+          <input type="number" name="MPrecioBolso" id="MPrecioBolso" placeholder="Precio" min="0" step="0.01" required>
+
+          <div class="mb-3">
+            <label for="MImagenBolso" class="form-label">Actualizar imagen</label>
+            <input type="file" name="MImagenBolso" id="MImagenBolso" accept="image/*">
+          </div>
+
+          <button type="submit" class="btn btn-primary mt-3">Actualizar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

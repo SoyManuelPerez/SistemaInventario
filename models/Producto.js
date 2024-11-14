@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Producto = new mongoose.Schema({
   Producto: { type: String, required: true },
-  Imagen: { type: String, required: true },
+  Imagenes: { type: [String], required: true }, 
   T30: { type: Number, default: 0 },
   T32: { type: Number, default: 0 },
   T34: { type: Number, default: 0 },
@@ -17,6 +17,4 @@ const Producto = new mongoose.Schema({
   Ingreso: { type: Number, default: 0 },
   Precio: { type: Number, required: true }
 });
-
-
 module.exports = mongoose.model('Producto', Producto);

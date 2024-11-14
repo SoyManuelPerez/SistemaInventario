@@ -37,7 +37,23 @@
         <% Producto.forEach( (Producto) => { %>
           <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
             <div class="card mb-3" style="width: 100%;">
-              <img src="img/Productos/<%= Producto.Imagen %>" class="card-img-top" alt="Imagen del producto">
+              <div id="carousel-<%= Producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <% Producto.Imagenes.forEach((imagen, index) => { %>
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                      <img src="img/Productos/<%= imagen %>" class="d-block w-100" alt="Imagen del producto">
+                    </div>
+                  <% }) %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
               <div class="card-body">
                 <h5 class="card-title"><%= Producto.Producto %></h5>
                 <p class="card-text">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p> 
