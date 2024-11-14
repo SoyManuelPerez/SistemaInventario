@@ -100,7 +100,9 @@ module.exports.PDF = async (req, res) => {
         productoCount = 0; 
       }
 
-      const imagePath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagen);
+      const imagePaths = producto.Imagenes.map(imagen => 
+        path.join(__dirname, '..', 'public', 'img', 'Productos', imagen)
+      );
       doc.image(imagePath, { width: 90, align: 'left' });
 
       // Estilo de texto para el nombre del producto (negrita y tamaño mayor)

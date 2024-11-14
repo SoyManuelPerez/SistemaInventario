@@ -168,6 +168,57 @@
       </table>
     </div>
 
+        <!-- Inventario de Accesorios -->
+        <div class="container">
+          <button onclick="descargarPDF('inventarioAccesorios')" class="btn btn-primary mb-3">Descargar PDF Accesorios</button>
+          <div id="mensajeCarga" style="display: none; color: green;">Generando PDF, por favor espera...</div>
+    <div id="mensajeError" style="display: none; color: red;">Error al generar el PDF.</div>
+    
+          <h1>Inventario de Accesorios</h1>
+          <table id="inventarioAccesorios" class="table table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Valor</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% Productos.filter(p => p.Tipo === 'Accesorios').forEach(producto => { %>
+                <tr data-id="<%= producto.id %>">
+                  <td>
+                    <div id="carousel-<%= producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                      <div class="carousel-inner">
+                        <% producto.Imagenes.forEach((imagen, index) => { %>
+                          <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                            <img src="img/Productos/<%= imagen %>" class="d-block w-80" width="90px" alt="Imagen del producto">
+                          </div>
+                        <% }) %>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= producto.id %>" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                      </button>
+                    </div>
+                  </td>
+                  <td><%= producto.Producto %></td>
+                  <td><%= producto.Cantidad %></td>
+                  <td><%= producto.Precio.toLocaleString('es-CO') %></td>
+                  <td>
+                    <a href="/EliminarProducto/<%= producto.id %>" class="btn btn-outline-danger bi bi-trash3"></a>
+                    <button class="btnModal btn btn-outline-primary bi bi-pencil-square" id="Bolso"></button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
 <!-- Modal para editar Correas -->
 <div id="modalActualizarCorrea" class="modal fade" tabindex="-1" aria-labelledby="modalActualizarCorreaLabel" aria-hidden="true">
   <div class="modal-dialog">
