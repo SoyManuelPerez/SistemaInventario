@@ -82,10 +82,12 @@ module.exports.PDF = async (req, res) => {
     const tabla = req.query.tabla;
     const tipo = tabla === 'inventarioCorreas' ? 'Correa' : 'Bolso';
 
-    // Filtra los productos según el tipo de tabla
-    const productos = await Productos.find({ Tipo: tipo });
+    // Filtrar productos según el tipo de tabla y cantidad mayor a 0
+    const productos = await Productos.find({ Tipo: tipo, Cantidad: { $gt: 0 } });
 
     const doc = new PDFDocument();
+
+    // Configurar encabezados para la respuesta
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=${tabla}.pdf`);
 
@@ -93,28 +95,41 @@ module.exports.PDF = async (req, res) => {
 
     let productoCount = 0;
 
-    productos.filter(p => p.Cantidad > 0).forEach((producto, index) => {
-      if (productoCount === 6) {
-        doc.addPage();
-        productoCount = 0; 
+    productos.forEach((producto) => {
+      if (productoCount === 5) {
+        doc.addPage(); // Agregar una nueva página cada 6 productos
+        productoCount = 0;
       }
 
-      const imagePaths = producto.Imagenes.map(imagen => 
-        path.join(__dirname, '..', 'public', 'img', 'Productos', imagen)
-      );
-      doc.image(imagePath, { width: 90, align: 'left' });
+      // Mostrar imágenes asociadas al producto
+      producto.Imagenes.forEach((imagen) => {
+        const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
+        try {
+          doc.image(imagenPath, { width: 90, align: 'left' });
+          doc.moveDown(4);
+        } catch (err) {
+          console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+        }
+      });
 
-      // Estilo de texto para el nombre del producto (negrita y tamaño mayor)
-      doc.fontSize(14).font('Helvetica-Bold').text(producto.Producto, { align: 'right' });
-      
-      // Estilo normal para el precio
-      doc.fontSize(12).font('Helvetica').text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+      doc
+        .fontSize(14)
+        .font('Helvetica-Bold')
+        .text(producto.Producto, { align: 'right' });
 
-      // Línea separadora y espaciado
-      doc.moveDown(5);
-      doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('black').stroke();
+      doc
+        .fontSize(12)
+        .font('Helvetica')
+        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+
+      doc
+        .moveDown(1)
+        .moveTo(50, doc.y)
+        .lineTo(550, doc.y)
+        .strokeColor('black')
+        .stroke();
+
       doc.moveDown(1);
-
       productoCount++;
     });
 
