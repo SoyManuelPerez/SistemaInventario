@@ -76,7 +76,6 @@ module.exports.Crear = async (req, res) => {
     }
   });
 };
-
 //PDF
 module.exports.PDF = async (req, res) => {
   try {
@@ -132,16 +131,23 @@ module.exports.eliminar = async (req, res) => {
     const producto = await Productos.findById(id).exec();
 
     if (producto) {
-      const absolutePath = path.resolve(__dirname, '../public/img/Productos/', producto.Imagen);
-      fs.unlink(absolutePath, (err) => {
-        if (err) {
-          console.error('Error al eliminar el archivo:', err);
-          return res.status(500).send('Error al eliminar el archivo.');
-        }
-      });
+      // Verifica si el producto tiene imágenes y es un array
+      if (Array.isArray(producto.Imagenes) && producto.Imagenes.length > 0) {
+        producto.Imagenes.forEach((imagen) => {
+          const absolutePath = path.resolve(__dirname, '../public/img/Productos/', imagen);
+          fs.unlink(absolutePath, (err) => {
+            if (err) {
+              console.error('Error al eliminar el archivo:', err);
+            }
+          });
+        });
+      }
 
+      // Elimina el producto de la base de datos
       await Productos.findByIdAndDelete(id).exec();
       console.log("Producto eliminado:", producto);
+
+      // Actualiza el repositorio Git
       updateGitRepo(res);
     } else {
       res.status(404).send("Producto no encontrado.");
@@ -151,57 +157,62 @@ module.exports.eliminar = async (req, res) => {
     res.status(500).send("Error al eliminar el producto.");
   }
 };
-// Editar Producto
-const uploadImages = (req, res, callback) => {
-  upload.array('Imagen', 5)(req, res, function (err) {
-    if (err) {
-      return res.status(500).send("Error al subir las imágenes.");
-    }
-    const Imagenes = req.files ? req.files.map(file => `img/Productos/${file.filename}`) : [];
-    callback(Imagenes);
-  });
-};
 
 module.exports.editarBolso = async (req, res) => {
   try {
-    uploadImages(req, res, async (Imagenes) => {
+    // Manejo de la subida de imágenes (máximo 5)
+    upload.array('MImagenBolso', 5)(req, res, async function (err) {
+      if (err) {
+        console.error("Error al subir las imágenes:", err);
+        return res.status(500).send("Error al subir las imágenes.");
+      }
+
       const { id, MProductoBolso, MCantidadBolso, MPrecioBolso } = req.body;
-      
+
+      // Generar un array con los nombres de los archivos subidos
+      const Imagenes = req.files ? req.files.map(file => file.filename) : [];
+
+      // Construir el objeto de actualización
       const updateData = {
         Producto: MProductoBolso,
         Cantidad: MCantidadBolso,
-        Precio: MPrecioBolso
+        Precio: MPrecioBolso,
       };
 
-      // Solo agregar imágenes si existen
+      // Solo incluir imágenes si hay nuevas cargadas
       if (Imagenes.length > 0) {
         updateData.Imagenes = Imagenes;
       }
 
-      const productoActualizado = await Productos.findByIdAndUpdate(id, updateData, { new: true });
+      // Actualizar el producto en la base de datos
+      const productoActualizado = await Productos.findByIdAndUpdate(id, updateData, { new: true }).exec();
 
       if (productoActualizado) {
-        console.log("Bolso Actualizado:", productoActualizado);
+        console.log("Bolso actualizado:", productoActualizado);
+
+        // Actualizar el repositorio Git
         updateGitRepo(res);
+
+        // Redirigir al inventario
         res.redirect('/Inventario');
       } else {
         res.status(404).send("Producto tipo bolso no encontrado.");
       }
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error al actualizar el producto tipo bolso:", error);
     res.status(500).send("Error al actualizar el producto tipo bolso.");
   }
 };
 
 module.exports.editar = async (req, res) => {
   try {
-    uploadImages(req, res, async (Imagenes) => {
+    upload.array('MImagenCorrea', 5)(req, res, async function (err) {
       const {
         id, MProductoCorrea, MCantidad30, MCantidad32, MCantidad34, MCantidad36,
         MCantidad38, MCantidad40, MCantidad42, MCantidad44, MCantidad46, MPrecioCorrea
       } = req.body;
-
+      const Imagenes = req.files ? req.files.map(file => file.filename) : [];
       const cantidadTotal = 
         (parseInt(MCantidad30) || 0) + 
         (parseInt(MCantidad32) || 0) + 
