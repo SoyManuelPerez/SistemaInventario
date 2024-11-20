@@ -83,7 +83,7 @@
                     <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
                   </div>
-                  <% if (Producto.Tipo === 'Correa') { %>
+                  <% if (Producto.Tipo === 'Correa' || Producto.Tipo === 'Accesorios') { %>
                     <input type="hidden" name="tipoProducto" value="Correa">
                     <input type="hidden" name="tallaSeleccionada" id="tallaSeleccionada-<%= Producto.id %>">
                     <script>

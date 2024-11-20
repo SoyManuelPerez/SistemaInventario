@@ -101,43 +101,51 @@ module.exports.PDF = async (req, res) => {
     let productoCount = 0;
 
     productos.forEach((producto) => {
-      if (productoCount === 5) {
-        doc.addPage(); // Nueva página cada 5 productos
+      if (productoCount === 3) {
+        doc.addPage();
         productoCount = 0;
       }
 
-      // Mostrar imágenes en bloques de tres
       const imagenes = producto.Imagenes || [];
-      for (let i = 0; i < imagenes.length; i += 3) {
-        const bloque = imagenes.slice(i, i + 3);
+      const maxImagenesPorFila = 3; // Número máximo de imágenes por fila
 
-        // Agregar imágenes en una fila
-        bloque.forEach((imagen, index) => {
+      // Dibujar imágenes horizontalmente
+      let yInicial = doc.y;
+      imagenes.forEach((imagen, index) => {
+        const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado entre imágenes
+        try {
           const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-          try {
-            doc.image(imagenPath, { width: 90, align: index === 0 ? 'left' : 'center' });
-          } catch (err) {
-            console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+          doc.image(imagenPath, xPos, yInicial, { width: 100 });
+
+          if ((index + 1) % maxImagenesPorFila === 0) {
+            yInicial += 110; // Salto a la siguiente fila de imágenes
           }
-        });
+        } catch (err) {
+          console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+        }
+      });
 
-        doc.moveDown(2); // Salto después de mostrar el bloque de imágenes
-      }
+      // Ajustar posición para el texto después de todas las imágenes
+      doc.moveDown(9);
 
-      // Mostrar nombre y precio del producto
-      doc
-        .fontSize(14)
-        .font('Helvetica-Bold')
-        .text(producto.Producto, { align: 'left' });
+      // Dividir texto si contiene comas
+      const nombreProducto = producto.Producto.split(',');
+      nombreProducto.forEach((linea) => {
+        doc
+          .fontSize(14)
+          .font('Helvetica-Bold')
+          .text(linea.trim(), { align: 'right' });
+      });
 
+      // Escribir el precio del producto
       doc
         .fontSize(12)
         .font('Helvetica')
-        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'left' });
+        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
 
       // Separador
       doc
-        .moveDown(1)
+        .moveDown(3)
         .moveTo(50, doc.y)
         .lineTo(550, doc.y)
         .strokeColor('black')
@@ -153,6 +161,7 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
+
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
   try {
