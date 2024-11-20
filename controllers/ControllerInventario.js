@@ -80,14 +80,19 @@ module.exports.Crear = async (req, res) => {
 module.exports.PDF = async (req, res) => {
   try {
     const tabla = req.query.tabla;
-    const tipo = tabla === 'inventarioCorreas' ? 'Correa' : 'Bolso';
+    let tipo;
 
-    // Filtrar productos según el tipo de tabla y cantidad mayor a 0
+    if (tabla === 'inventarioCorreas') tipo = 'Correa';
+    else if (tabla === 'inventarioBolsos') tipo = 'Bolso';
+    else if (tabla === 'inventarioAccesorios') tipo = 'Accesorios';
+    else return res.status(400).send("Tabla no válida");
+
+    // Filtrar productos por tipo y cantidad mayor a 0
     const productos = await Productos.find({ Tipo: tipo, Cantidad: { $gt: 0 } });
 
     const doc = new PDFDocument();
 
-    // Configurar encabezados para la respuesta
+    // Configurar encabezados de respuesta
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=${tabla}.pdf`);
 
@@ -97,31 +102,40 @@ module.exports.PDF = async (req, res) => {
 
     productos.forEach((producto) => {
       if (productoCount === 5) {
-        doc.addPage(); // Agregar una nueva página cada 6 productos
+        doc.addPage(); // Nueva página cada 5 productos
         productoCount = 0;
       }
 
-      // Mostrar imágenes asociadas al producto
-      producto.Imagenes.forEach((imagen) => {
-        const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-        try {
-          doc.image(imagenPath, { width: 90, align: 'left' });
-          doc.moveDown(4);
-        } catch (err) {
-          console.error(`Error al cargar la imagen: ${imagenPath}`, err);
-        }
-      });
+      // Mostrar imágenes en bloques de tres
+      const imagenes = producto.Imagenes || [];
+      for (let i = 0; i < imagenes.length; i += 3) {
+        const bloque = imagenes.slice(i, i + 3);
 
+        // Agregar imágenes en una fila
+        bloque.forEach((imagen, index) => {
+          const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
+          try {
+            doc.image(imagenPath, { width: 90, align: index === 0 ? 'left' : 'center' });
+          } catch (err) {
+            console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+          }
+        });
+
+        doc.moveDown(2); // Salto después de mostrar el bloque de imágenes
+      }
+
+      // Mostrar nombre y precio del producto
       doc
         .fontSize(14)
         .font('Helvetica-Bold')
-        .text(producto.Producto, { align: 'right' });
+        .text(producto.Producto, { align: 'left' });
 
       doc
         .fontSize(12)
         .font('Helvetica')
-        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'left' });
 
+      // Separador
       doc
         .moveDown(1)
         .moveTo(50, doc.y)
