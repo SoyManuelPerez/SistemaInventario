@@ -2,6 +2,7 @@ const Producto = require('../models/Ventas')
 const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
 const jsonwebtoken = require('jsonwebtoken');
+const path = require('path');
 dotenv.config();
 //Mostrar Catalogo
 module.exports.mostrar = (req, res) => {
@@ -33,21 +34,24 @@ module.exports.mostrar = (req, res) => {
 }
 // Controlador para servir el PDF
 exports.pdf = (req, res) => {
-  // Asegúrate de que `req.query.file` contenga el nombre del archivo
   const fileName = req.query.file;
-
   if (!fileName) {
+    console.error('Error: No se especificó el archivo.');
     return res.status(400).send('El archivo no se especificó.');
   }
-
-  // Ruta absoluta al archivo
+  // Ruta completa del archivo
   const filePath = path.join(__dirname, '../public/pdf', fileName);
 
-  // Enviar el archivo al cliente
+  // Verifica si el archivo existe y envíalo
   res.sendFile(filePath, (err) => {
     if (err) {
-      console.error('Error al enviar el archivo:', err);
-      res.status(404).send('Archivo no encontrado.');
+      console.error(`Error al intentar enviar el archivo: ${fileName}`, err);
+      if (err.code === 'ENOENT') {
+        // Archivo no encontrado
+        return res.status(404).send('Archivo no encontrado.');
+      }
+      // Otro tipo de error
+      res.status(500).send('Error interno del servidor.');
     }
   });
 };
