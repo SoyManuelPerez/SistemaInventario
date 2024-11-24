@@ -25,6 +25,8 @@ router.get('/Ventas',Ventas.mostrar,(req,res)=>{
 router.get('/Estadisticas',Estadistica.mostrar,(req,res)=>{
     res.render('Estadistica')
 });
+router.get('/pdf',Ventas.pdf,(req,res)=>{
+});
 router.get('/Pedido',Pedido.mostrar,(req,res)=>{
     res.render('Pedido')
 });
