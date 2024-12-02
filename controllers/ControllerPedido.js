@@ -127,23 +127,39 @@ module.exports.AgregarCart = async (req, res) => {
   const id = req.params.id;
   let { cantidad, tipoProducto, tallaSeleccionada } = req.body;
 
+  // Validar los datos de entrada
   cantidad = parseInt(cantidad, 10);
+  if (isNaN(cantidad) || cantidad <= 0) {
+    return res.status(400).send({ status: "Error", message: "Cantidad inválida." });
+  }
+
   const talla = tipoProducto === 'Correa' ? tallaSeleccionada : 'N/A';
+  if (tipoProducto === 'Correa' && (!tallaSeleccionada || tallaSeleccionada.trim() === '')) {
+    return res.status(400).send({ status: "Error", message: "Debe seleccionar una talla válida para el producto." });
+  }
+
   try {
+    // Buscar el producto por ID
     const producto = await Producto.findById(id);
     if (!producto) {
-      return res.status(404).send({ status: "Error", message: "Producto no encontrado"});
+      return res.status(404).send({ status: "Error", message: "Producto no encontrado." });
     }
 
+    // Determinar stock disponible
     let stockDisponible = tipoProducto === 'Correa' ? producto[talla] : producto.Cantidad;
-    if (!stockDisponible) {
-      return res.status(400).send({ status: "Error", message: `La talla ${talla} no está disponible.` });
+    if (!stockDisponible || stockDisponible <= 0) {
+      return res.status(400).send({ status: "Error", message: `Stock no disponible para la ${tipoProducto === 'Correa' ? `talla ${talla}` : 'cantidad solicitada'}.` });
     }
 
+    // Verificar si la cantidad solicitada excede el stock
     if (cantidad > stockDisponible) {
-      return res.status(400).send({ status: "Error", message: `Cantidad solicitada (${cantidad}) excede el stock disponible (${stockDisponible})` });
+      return res.status(400).send({
+        status: "Error",
+        message: `Cantidad solicitada (${cantidad}) excede el stock disponible (${stockDisponible}).`,
+      });
     }
 
+    // Reducir el stock del producto
     if (tipoProducto === 'Correa') {
       producto[talla] -= cantidad;
     } else {
@@ -151,17 +167,21 @@ module.exports.AgregarCart = async (req, res) => {
     }
     await producto.save();
 
+    // Crear un nuevo pedido
     const nuevoPedido = new Pedido({
       Producto: producto.Producto,
       Cantidad: cantidad,
       Talla: talla,
       Precio: producto.Precio,
-      Imagen: producto.Imagen
+      Imagen: producto.Imagen || producto.Imagenes[0], // Ajustar según el esquema de Producto
     });
     await nuevoPedido.save();
+
+    // Responder con éxito
+    res.status(200).send({ status: "Success", message: "Producto agregado al pedido exitosamente." });
   } catch (err) {
     console.error('Error al procesar el pedido:', err);
-    res.status(500).send({ status: "Error", message: 'Hubo un error al procesar el pedido' });
+    res.status(500).send({ status: "Error", message: "Hubo un error al procesar el pedido." });
   }
 };
 
