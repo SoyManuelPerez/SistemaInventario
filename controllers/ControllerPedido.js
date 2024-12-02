@@ -176,9 +176,6 @@ module.exports.AgregarCart = async (req, res) => {
       Imagen: producto.Imagen || producto.Imagenes[0], // Ajustar según el esquema de Producto
     });
     await nuevoPedido.save();
-
-    // Responder con éxito
-    res.status(200).send({ status: "Success", message: "Producto agregado al pedido exitosamente." });
   } catch (err) {
     console.error('Error al procesar el pedido:', err);
     res.status(500).send({ status: "Error", message: "Hubo un error al procesar el pedido." });
