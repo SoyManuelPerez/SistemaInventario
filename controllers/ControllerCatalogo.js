@@ -16,7 +16,7 @@ module.exports.mostrar = (req, res) => {
     }); 
   }
   Promise.all([
-    Producto.find({}),
+    Producto.find({ Cantidad: { $gt: 0 } }),
     Usuario.find({ user: User })
   ]).then(([Producto, Usuario]) => {
     const tipoUsuario = Usuario.length > 0 ? Usuario[0].type : null;

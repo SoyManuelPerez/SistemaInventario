@@ -34,76 +34,74 @@
         </div>
       </div>
       <div class="row" id="productContainer">
-        <% Producto.forEach( (Producto) => { %>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
-            <div class="card mb-3" style="width: 100%;">
-              <div id="carousel-<%= Producto.id %>" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                  <% Producto.Imagenes.forEach((imagen, index) => { %>
-                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                      <img src="img/Productos/<%= imagen %>" class="d-block w-100" alt="Imagen del producto">
-                    </div>
-                  <% }) %>
+        <% Producto.forEach((Producto) => { %>
+          <% if (Producto.Cantidad > 0) { %> <!-- Mostrar solo productos con cantidad mayor a cero -->
+            <div class="col-lg-3 col-md-4 col-sm-6 col-6 product-card">
+              <div class="card mb-3" style="width: 100%;">
+                <!-- Carrusel de imágenes -->
+                <div id="carousel-<%= Producto.id %>" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-inner">
+                    <% Producto.Imagenes.forEach((imagen, index) => { %>
+                      <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                        <img src="img/Productos/<%= imagen %>" class="d-block w-100" alt="Imagen del producto">
+                      </div>
+                    <% }) %>
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= Producto.id %>" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Next</span>
-                </button>
-              </div>
-              <div class="card-body">
-                <h5 class="card-title"><%= Producto.Producto %></h5>
-                <p class="card-text">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p> 
-                <% if (Producto.Tipo === 'Correa') { %>
-                  <div class="tallas">
-                    <div class="form-group">
-                      <label for="talla-<%= Producto.id %>">Talla</label>
+            
+                <!-- Información del producto -->
+                <div class="card-body">
+                  <h5 class="card-title"><%= Producto.Producto %></h5>
+                  <p class="card-text">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
+            
+                  <!-- Lógica para productos tipo Correa -->
+                  <% if (Producto.Tipo === 'Correa') { %>
+                    <div class="tallas">
+                      <label for="talla-<%= Producto.id %>">Selecciona una talla</label>
                       <div class="btn-group-toggle d-flex flex-wrap justify-content-between" data-toggle="buttons">
                         <% for (let talla = 30; talla <= 46; talla += 2) { %>
                           <div class="mb-3" style="flex-basis: 30%;">
                             <label class="btn btn-outline-primary mb-2 w-100">
-                              <input type="radio" name="talla-<%= Producto.id %>" id="talla-<%= talla %>" value="T<%= talla %>">
+                              <input
+                                type="radio"
+                                name="tallaSeleccionada-<%= Producto.id %>"
+                                id="talla-<%= Producto.id %>-<%= talla %>"
+                                value="T<%= talla %>">
                               T<%= talla %>
                             </label>
-                            <div class="text-center" id="Ctallas">
+                            <div class="text-center">
                               <%= Producto['T' + talla] %>
                             </div>
                           </div>
-                        <% } %>                        
+                        <% } %>
                       </div>
                     </div>
-                  </div>
-                <% } %>
-                <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
-                  <div id="error-message-<%= Producto.id %>" class="alert alert-danger" style="display: none;"></div> <!-- Contenedor para el mensaje de error -->
-                  <div class="cantidad-container">
-                    <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
-                    <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
-                  </div>
-                  <% if (Producto.Tipo === 'Correa' || Producto.Tipo === 'Accesorios') { %>
-                    <input type="hidden" name="tipoProducto" value="Correa">
                     <input type="hidden" name="tallaSeleccionada" id="tallaSeleccionada-<%= Producto.id %>">
-                    <script>
-                      document.querySelectorAll('input[name="talla-<%= Producto.id %>"]').forEach((radio) => {
-                            radio.addEventListener('change', function() {
-                            document.getElementById('tallaSeleccionada-<%= Producto.id %>').value = this.value;
-                            });
-                            });
-                    </script>
                   <% } %>
-                  <br>
-                  <button type="submit" class="btn-agregar btn btn-primary">Agregar al pedido</button>
-                </form>
+                  <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
+                    <div id="error-message-<%= Producto.id %>" class="alert alert-danger" style="display: none;"></div>
+                    <div class="cantidad-container">
+                      <label for="cantidad-<%= Producto.id %>" class="cantidad-label">Cantidad</label>
+                      <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control cantidad-input" min="1" value="1">
+                    </div>
+                    <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
+                    <button type="submit" class="btn-agregar btn btn-primary mt-3">Agregar al pedido</button>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
+            
+          <% } %> <!-- Fin del filtro por cantidad -->
         <% }) %>
-      </div>
-      
-      
+      </div>      
       <div id="noProductMessage" class="text-center mt-4" style="display: none;">
         <h1>Producto no encontrado.</h1>
       </div>

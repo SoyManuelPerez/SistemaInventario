@@ -126,7 +126,6 @@ module.exports.Factura = async (req, res) => {
 module.exports.AgregarCart = async (req, res) => {
   const id = req.params.id;
   let { cantidad, tipoProducto, tallaSeleccionada } = req.body;
-
   // Validar los datos de entrada
   cantidad = parseInt(cantidad, 10);
   if (isNaN(cantidad) || cantidad <= 0) {
@@ -175,7 +174,8 @@ module.exports.AgregarCart = async (req, res) => {
       Precio: producto.Precio,
       Imagen: producto.Imagen || producto.Imagenes[0], // Ajustar según el esquema de Producto
     });
-    await nuevoPedido.save();
+    await nuevoPedido.save();    
+    res.redirect('/Pedido');
   } catch (err) {
     console.error('Error al procesar el pedido:', err);
     res.status(500).send({ status: "Error", message: "Hubo un error al procesar el pedido." });
