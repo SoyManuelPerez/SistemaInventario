@@ -88,8 +88,8 @@ module.exports.PDF = async (req, res) => {
 
     if (tabla === 'inventarioCorreas') {
       tipo = 'Correa';
-      maxProductosPorPagina = 4;
-      maxImagenesPorFila = 2;
+      maxProductosPorPagina = 4; 
+      maxImagenesPorFila = 3; 
     } else if (tabla === 'inventarioBolsos') {
       tipo = 'Bolso';
     } else if (tabla === 'inventarioAccesorios') {
@@ -110,60 +110,90 @@ module.exports.PDF = async (req, res) => {
     doc.pipe(res);
 
     let productoCount = 0;
+    let filaCount = 0;
 
-    productos.forEach((producto) => {
-      if (productoCount === maxProductosPorPagina) {
-        doc.addPage();
-        productoCount = 0;
-      }
-
-      const imagenes = producto.Imagenes || [];
-      let yInicial = doc.y;
-
-      // Dibujar imágenes
-      imagenes.forEach((imagen, index) => {
-        const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado horizontal
-        try {
-          const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-          doc.image(imagenPath, xPos, yInicial, { width: maxImagenesPorFila === 2 ? 160 : 100 });
-
-          if ((index + 1) % maxImagenesPorFila === 0) {
-            yInicial += 110; // Salto vertical después de llenar una fila
-          }
-        } catch (err) {
-          console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+    productos.forEach((producto, index) => {
+      // Lógica específica para "Correa"
+      if (tipo === 'Correa') {
+        if (filaCount === maxProductosPorPagina) {
+          doc.addPage();
+          filaCount = 0;
         }
-      });
 
-      // Ajustar posición para texto después de todas las imágenes
-      doc.moveDown(9);
-if(tipo!='Correa'){
-  // Dividir texto si contiene comas
-  const nombreProducto = producto.Producto.split(',');
-  nombreProducto.forEach((linea) => {
-    doc
-      .fontSize(14)
-      .font('Helvetica-Bold')
-      .text(linea.trim(), { align: 'right' });
-  });
+        const margenIzquierdo = 50; // Reducir el margen inicial
+        const espaciadoHorizontal = 160; // Espaciado entre imágenes
+        const xPos = margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal; // Ajuste dinámico del margen izquierdo
+        const yPos = doc.y;
+        
+        if (producto.Imagenes && producto.Imagenes.length > 0) {
+          try {
+            const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagenes[0]);
+            doc.image(imagenPath, xPos, yPos, { width: 150 }); // Mostrar solo la primera imagen
+          } catch (err) {
+            console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
+          }
+        }
+        
+        productoCount++;
+        if (productoCount % maxImagenesPorFila === 0) {
+          doc.moveDown(12); // Salto entre filas
+          filaCount++;
+        }
+        
+      } else {
+        // Lógica general para otros tipos
+        if (productoCount === maxProductosPorPagina) {
+          doc.addPage();
+          productoCount = 0;
+        }
 
-  // Escribir el precio del producto
-  doc
-    .fontSize(12)
-    .font('Helvetica')
-    .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+        const imagenes = producto.Imagenes || [];
+        let yInicial = doc.y;
 
-  // Separador
-}
-      doc
-        .moveDown(3)
-        .moveTo(50, doc.y)
-        .lineTo(550, doc.y)
-        .strokeColor('black')
-        .stroke();
+        // Dibujar imágenes
+        imagenes.forEach((imagen, index) => {
+          const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado horizontal entre imágenes
+          try {
+            const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
+            doc.image(imagenPath, xPos, yInicial, { width:  100 });
 
-      doc.moveDown(1);
-      productoCount++;
+            if ((index + 1) % maxImagenesPorFila === 0) {
+              yInicial += 110; // Salto vertical después de llenar una fila
+            }
+          } catch (err) {
+            console.error(`Error al cargar la imagen: ${imagenPath}`, err);
+          }
+        });
+
+        // Ajustar posición para texto después de todas las imágenes
+        doc.moveDown(9);
+
+        // Dividir texto si contiene comas
+        const nombreProducto = producto.Producto.split(',');
+        nombreProducto.forEach((linea) => {
+          doc
+            .fontSize(14)
+            .font('Helvetica-Bold')
+            .text(linea.trim(), { align: 'right' });
+        });
+
+        // Escribir el precio del producto
+        doc
+          .fontSize(12)
+          .font('Helvetica')
+          .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+
+        // Separador
+        doc
+          .moveDown(3)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .strokeColor('black')
+          .stroke();
+
+        doc.moveDown(1);
+        productoCount++;
+      }
     });
 
     doc.end();
@@ -172,7 +202,6 @@ if(tipo!='Correa'){
     res.status(500).send("Error al generar el PDF");
   }
 };
-
 
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
