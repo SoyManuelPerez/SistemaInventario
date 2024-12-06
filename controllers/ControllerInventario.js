@@ -80,12 +80,23 @@ module.exports.Crear = async (req, res) => {
 module.exports.PDF = async (req, res) => {
   try {
     const tabla = req.query.tabla;
-    let tipo;
 
-    if (tabla === 'inventarioCorreas') tipo = 'Correa';
-    else if (tabla === 'inventarioBolsos') tipo = 'Bolso';
-    else if (tabla === 'inventarioAccesorios') tipo = 'Accesorios';
-    else return res.status(400).send("Tabla no válida");
+    // Definir el tipo de producto basado en la tabla
+    let tipo;
+    let maxProductosPorPagina = 3; // Por defecto
+    let maxImagenesPorFila = 3;   // Por defecto
+
+    if (tabla === 'inventarioCorreas') {
+      tipo = 'Correa';
+      maxProductosPorPagina = 4;
+      maxImagenesPorFila = 2;
+    } else if (tabla === 'inventarioBolsos') {
+      tipo = 'Bolso';
+    } else if (tabla === 'inventarioAccesorios') {
+      tipo = 'Accesorios';
+    } else {
+      return res.status(400).send("Tabla no válida");
+    }
 
     // Filtrar productos por tipo y cantidad mayor a 0
     const productos = await Productos.find({ Tipo: tipo, Cantidad: { $gt: 0 } });
@@ -101,49 +112,49 @@ module.exports.PDF = async (req, res) => {
     let productoCount = 0;
 
     productos.forEach((producto) => {
-      if (productoCount === 3) {
+      if (productoCount === maxProductosPorPagina) {
         doc.addPage();
         productoCount = 0;
       }
 
       const imagenes = producto.Imagenes || [];
-      const maxImagenesPorFila = 3; // Número máximo de imágenes por fila
-
-      // Dibujar imágenes horizontalmente
       let yInicial = doc.y;
+
+      // Dibujar imágenes
       imagenes.forEach((imagen, index) => {
-        const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado entre imágenes
+        const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado horizontal
         try {
           const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-          doc.image(imagenPath, xPos, yInicial, { width: 100 });
+          doc.image(imagenPath, xPos, yInicial, { width: maxImagenesPorFila === 2 ? 160 : 100 });
 
           if ((index + 1) % maxImagenesPorFila === 0) {
-            yInicial += 110; // Salto a la siguiente fila de imágenes
+            yInicial += 110; // Salto vertical después de llenar una fila
           }
         } catch (err) {
           console.error(`Error al cargar la imagen: ${imagenPath}`, err);
         }
       });
 
-      // Ajustar posición para el texto después de todas las imágenes
+      // Ajustar posición para texto después de todas las imágenes
       doc.moveDown(9);
+if(tipo!='Correa'){
+  // Dividir texto si contiene comas
+  const nombreProducto = producto.Producto.split(',');
+  nombreProducto.forEach((linea) => {
+    doc
+      .fontSize(14)
+      .font('Helvetica-Bold')
+      .text(linea.trim(), { align: 'right' });
+  });
 
-      // Dividir texto si contiene comas
-      const nombreProducto = producto.Producto.split(',');
-      nombreProducto.forEach((linea) => {
-        doc
-          .fontSize(14)
-          .font('Helvetica-Bold')
-          .text(linea.trim(), { align: 'right' });
-      });
+  // Escribir el precio del producto
+  doc
+    .fontSize(12)
+    .font('Helvetica')
+    .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
 
-      // Escribir el precio del producto
-      doc
-        .fontSize(12)
-        .font('Helvetica')
-        .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
-
-      // Separador
+  // Separador
+}
       doc
         .moveDown(3)
         .moveTo(50, doc.y)
@@ -161,6 +172,7 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
+
 
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
