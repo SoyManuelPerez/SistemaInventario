@@ -55,3 +55,48 @@ exports.pdf = (req, res) => {
     }
   });
 };
+//Eliminar Venta y PDF
+module.exports.eliminarPedido = async (req, res) => {
+    const id = req.params.id;  
+    try {
+      // Buscar el pedido en la base de datos
+      const pedido = await Producto.findById(id);
+      if (!pedido) {
+        console.log("Pedido no encontrado.");
+        return res.status(404).redirect('/Ventas');
+      }
+      const pdfPath = path.join(__dirname, 'public', 'pdf', pedido.url); 
+      fs.unlink(pdfPath, (err) => {
+        if (err) {
+          console.error("Error al eliminar el archivo PDF:", err.message);
+        } else {
+          console.log("Archivo PDF eliminado:", pdfPath);
+        }
+      });
+      await Producto.findByIdAndDelete(id);
+      res.redirect('/Ventas');
+    } catch (error) {
+      console.error("Error al eliminar el pedido:", error);
+      res.status(500).send("Hubo un error al procesar la eliminación del pedido");
+    }
+};
+  
+module.exports.Actualizar = async (req, res) => {
+  const { id } = req.params;
+  const { nuevoEstado } = req.body;
+
+  try {
+    const pedido = await Producto.findById(id);
+    if (!pedido) {
+      return res.status(404).send("Pedido no encontrado");
+    }
+
+    pedido.Estado = nuevoEstado;
+    await pedido.save();
+
+    res.redirect('/Ventas');
+  } catch (error) {
+    console.error("Error al actualizar el estado del pedido:", error);
+    res.status(500).send("Hubo un error al actualizar el estado");
+  }
+};

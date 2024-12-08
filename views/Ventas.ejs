@@ -35,13 +35,53 @@
           <td><%= Producto.Estado %></td>
           <td><a href="/pdf?file=<%= Producto.Url %>" class="text-light" target="_blank">Pedido</a></td>
           <td>
-            <a type="button" class="btn btn-outline-primary bi bi-pencil" aria-label="Editar"></a>
-            <button type="button" class="btn btn-outline-danger bi bi-trash" aria-label="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="<%= Producto.id %>"></button>
+            <button 
+              type="button" 
+              class="btn btn-outline-primary bi bi-pencil" 
+              data-bs-toggle="modal" 
+              data-bs-target="#editarEstadoModal" 
+              data-id="<%= Producto._id %>" 
+              data-estado="<%= Producto.Estado %>">
+            </button>
+            <a href="/Eliminarventas/<%= Producto._id %>" class="btn btn-outline-danger bi bi-trash"></a>
           </td>
         </tr>
       <% }) %>
     </tbody>
   </table>
 </main>
+<!-- Modal -->
+<div class="modal fade" id="editarEstadoModal" tabindex="-1" aria-labelledby="editarEstadoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editarEstadoModalLabel">Editar Estado del Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="formEditarEstado" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="estadoActual" class="form-label">Estado Actual</label>
+            <input type="text" class="form-control" id="estadoActual" name="estadoActual" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
+            <select class="form-select" id="nuevoEstado" name="nuevoEstado" required>
+              <option value="" disabled selected>Selecciona un nuevo estado</option>
+              <option value="Por empacar">Por empacar</option>
+              <option value="Empacado">Empacado</option>
+              <option value="Enviado">Enviado</option>
+              <option value="Recibido">Recibido</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 </body>
 </html>
