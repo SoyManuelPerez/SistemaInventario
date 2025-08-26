@@ -69,7 +69,6 @@ module.exports.Crear = async (req, res) => {
       console.log(newProducto);
       await newProducto.save();
       updateGitRepo(res);
-      res.redirect('/Inventario');
     } catch (error) {
       res.status(500).send("Error al guardar el producto.");
       console.log(error);
@@ -271,9 +270,6 @@ module.exports.editarBolso = async (req, res) => {
 
         // Actualizar el repositorio Git
         updateGitRepo(res);
-
-        // Redirigir al inventario
-        res.redirect('/Inventario');
       } else {
         res.status(404).send("Producto tipo bolso no encontrado.");
       }
@@ -327,7 +323,6 @@ module.exports.editar = async (req, res) => {
       if (productoActualizado) {
         console.log("Correa Actualizada:", productoActualizado);
         updateGitRepo(res);
-        res.redirect('/Inventario');
       } else {
         res.status(404).send("Producto tipo correa no encontrado.");
       }
@@ -402,58 +397,55 @@ function checkRemoteExists(callback) {
 // Función para agregar, hacer commit y empujar los cambios
 function pushChanges(callback) {
   const gitCommands = `
-    git checkout main
-    git pull origin main
-    git add .
-    git commit -m "Actualización automática Exitosa"
+    git checkout main &&
+    git pull origin main &&
+    git add . &&
+    git commit -m "Actualización automática Exitosa" ||
+    echo "No hay cambios para commitear" &&
     git push origin main
   `;
 
-  runGitCommand(gitCommands, callback);
+  runGitCommand(gitCommands, (err, stdout) => {
+    if (callback.called) return; // ⚡ evita llamadas dobles
+    callback.called = true;
+    callback(err, stdout);
+  });
 }
 
 // Función para actualizar el repositorio de Git
 function updateGitRepo(res) {
   configureGitUser((err) => {
     if (err) {
-      res.status(500).send("Error configurando usuario de Git.");
-      return;
+      return res.status(500).send("Error configurando usuario de Git.");
     }
 
     checkRemoteExists((err, exists) => {
       if (err) {
-        res.status(500).send("Error verificando repositorio remoto.");
-        return;
+        return res.status(500).send("Error verificando repositorio remoto.");
       }
+
+      const afterPush = (err) => {
+        if (err) {
+          return res.status(500).send("Error empujando cambios al repositorio remoto.");
+        }
+        console.log('Cambios empujados al repositorio remoto con éxito.');
+        return res.redirect('/Inventario'); // 👈 siempre termina aquí
+      };
 
       if (!exists) {
         configureGitRemote((err) => {
           if (err) {
-            res.status(500).send("Error configurando repositorio remoto.");
-            return;
+            return res.status(500).send("Error configurando repositorio remoto.");
           }
-          pushChanges((err) => {
-            if (err) {
-              res.status(500).send("Error empujando cambios al repositorio remoto.");
-              return;
-            }
-            console.log('Cambios empujados al repositorio remoto con éxito.');
-            res.redirect('/Inventario');
-          });
+          pushChanges(afterPush);
         });
       } else {
-        pushChanges((err) => {
-          if (err) {
-            res.status(500).send("Error empujando cambios al repositorio remoto.");
-            return;
-          }
-          console.log('Cambios empujados al repositorio remoto con éxito.');
-          res.redirect('/Inventario');
-        });
+        pushChanges(afterPush);
       }
     });
   });
 }
+
 
 // Función para configurar el repositorio remoto
 function configureGitRemote(callback) {
