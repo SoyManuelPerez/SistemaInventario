@@ -7,6 +7,7 @@ const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
 const jsonwebtoken = require('jsonwebtoken');
 const { exec } = require('child_process');
+const sharp = require("sharp"); 
 dotenv.config();
 
 const storage = multer.diskStorage({
@@ -76,6 +77,13 @@ module.exports.Crear = async (req, res) => {
   });
 };
 //PDF
+async function getOptimizedImageBuffer(imagenPath) {
+  return await sharp(imagenPath)
+    .resize({ width: 500 }) // Redimensionar ancho máximo a 500px
+    .jpeg({ quality: 70 })  // Comprimir calidad
+    .toBuffer();
+}
+
 module.exports.PDF = async (req, res) => {
   try {
     const tabla = req.query.tabla;
@@ -85,35 +93,38 @@ module.exports.PDF = async (req, res) => {
     let maxProductosPorPagina = 3; // Por defecto
     let maxImagenesPorFila = 3;   // Por defecto
 
-    if (tabla === 'inventarioCorreas') {
-      tipo = 'Correa';
-      maxProductosPorPagina = 4; 
-      maxImagenesPorFila = 3; 
-    } else if (tabla === 'inventarioBolsos') {
-      tipo = 'Bolso';
-    } else if (tabla === 'inventarioAccesorios') {
-      tipo = 'Accesorios';
+    if (tabla === "inventarioCorreas") {
+      tipo = "Correa";
+      maxProductosPorPagina = 4;
+      maxImagenesPorFila = 3;
+    } else if (tabla === "inventarioBolsos") {
+      tipo = "Bolso";
+    } else if (tabla === "inventarioAccesorios") {
+      tipo = "Accesorios";
     } else {
       return res.status(400).send("Tabla no válida");
     }
 
     // Filtrar productos por tipo y cantidad mayor a 0
-    const productos = await Productos.find({ Tipo: tipo, Cantidad: { $gt: 0 } });
+    const productos = await Productos.find({
+      Tipo: tipo,
+      Cantidad: { $gt: 0 },
+    });
 
     const doc = new PDFDocument();
 
     // Configurar encabezados de respuesta
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=${tabla}.pdf`);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=${tabla}.pdf`);
 
     doc.pipe(res);
 
     let productoCount = 0;
     let filaCount = 0;
 
-    productos.forEach((producto, index) => {
-      // Lógica específica para "Correa"
-      if (tipo === 'Correa') {
+    for (const producto of productos) {
+      if (tipo === "Correa") {
+        // ------------------- Lógica Correas -------------------
         if (filaCount === maxProductosPorPagina) {
           doc.addPage();
           filaCount = 0;
@@ -121,26 +132,34 @@ module.exports.PDF = async (req, res) => {
 
         const margenIzquierdo = 50;
         const espaciadoHorizontal = 160;
-        const xPos = margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal;
+        const xPos =
+          margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal;
         const yPos = doc.y;
-        
+
         if (producto.Imagenes && producto.Imagenes.length > 0) {
           try {
-            const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagenes[0]);
-            doc.image(imagenPath, xPos, yPos, { width: 150 }); 
+            const imagenPath = path.join(
+              __dirname,
+              "..",
+              "public",
+              "img",
+              "Productos",
+              producto.Imagenes[0]
+            );
+            const buffer = await getOptimizedImageBuffer(imagenPath);
+            doc.image(buffer, xPos, yPos, { width: 150 });
           } catch (err) {
             console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
           }
         }
-        
+
         productoCount++;
         if (productoCount % maxImagenesPorFila === 0) {
-          doc.moveDown(12); 
+          doc.moveDown(12);
           filaCount++;
         }
-        
       } else {
-        // Lógica general para otros tipos (Bolsos, Accesorios)
+        // ------------------- Lógica Bolsos y Accesorios -------------------
         if (productoCount === maxProductosPorPagina) {
           doc.addPage();
           productoCount = 0;
@@ -150,40 +169,49 @@ module.exports.PDF = async (req, res) => {
         let yInicial = doc.y;
 
         if (imagenes.length > 0) {
-          imagenes.forEach((imagen, idx) => {
-            const xPos = 50 + (idx % maxImagenesPorFila) * 150; 
+          for (let idx = 0; idx < imagenes.length; idx++) {
+            const imagen = imagenes[idx];
+            const xPos = 50 + (idx % maxImagenesPorFila) * 150;
+
             try {
-              const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-              doc.image(imagenPath, xPos, yInicial, { width: 100 });
+              const imagenPath = path.join(
+                __dirname,
+                "..",
+                "public",
+                "img",
+                "Productos",
+                imagen
+              );
+              const buffer = await getOptimizedImageBuffer(imagenPath);
+              doc.image(buffer, xPos, yInicial, { width: 100 });
 
               if ((idx + 1) % maxImagenesPorFila === 0) {
-                yInicial += 110; 
+                yInicial += 110;
               }
             } catch (err) {
               console.error(`Error al cargar la imagen: ${imagen}`, err);
             }
-          });
+          }
         }
 
         // Ajustar posición para texto después de todas las imágenes
         doc.moveDown(9);
 
-        // Dividir texto si contiene comas
-        const nombreProducto = producto.Producto ? producto.Producto.split(',') : ["Producto sin nombre"];
+        // Nombre del producto (dividido por comas si aplica)
+        const nombreProducto = producto.Producto
+          ? producto.Producto.split(",")
+          : ["Producto sin nombre"];
         nombreProducto.forEach((linea) => {
-          doc
-            .fontSize(14)
-            .font('Helvetica-Bold')
-            .text(linea.trim(), { align: 'right' });
+          doc.fontSize(14).font("Helvetica-Bold").text(linea.trim(), { align: "right" });
         });
 
-        // Escribir el precio del producto
+        // Precio del producto
         doc
           .fontSize(12)
-          .font('Helvetica')
+          .font("Helvetica")
           .text(
-            `Precio: $${producto.Precio ? producto.Precio.toLocaleString('es-CO') : "N/A"} COP`,
-            { align: 'right' }
+            `Precio: $${producto.Precio ? producto.Precio.toLocaleString("es-CO") : "N/A"} COP`,
+            { align: "right" }
           );
 
         // Separador
@@ -191,13 +219,13 @@ module.exports.PDF = async (req, res) => {
           .moveDown(3)
           .moveTo(50, doc.y)
           .lineTo(550, doc.y)
-          .strokeColor('black')
+          .strokeColor("black")
           .stroke();
 
         doc.moveDown(1);
         productoCount++;
       }
-    });
+    }
 
     doc.end();
   } catch (error) {
@@ -205,8 +233,6 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
-
-
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
   try {
