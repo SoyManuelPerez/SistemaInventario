@@ -119,15 +119,15 @@ module.exports.PDF = async (req, res) => {
           filaCount = 0;
         }
 
-        const margenIzquierdo = 50; // Reducir el margen inicial
-        const espaciadoHorizontal = 160; // Espaciado entre imágenes
-        const xPos = margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal; // Ajuste dinámico del margen izquierdo
+        const margenIzquierdo = 50;
+        const espaciadoHorizontal = 160;
+        const xPos = margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal;
         const yPos = doc.y;
         
         if (producto.Imagenes && producto.Imagenes.length > 0) {
           try {
             const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', producto.Imagenes[0]);
-            doc.image(imagenPath, xPos, yPos, { width: 150 }); // Mostrar solo la primera imagen
+            doc.image(imagenPath, xPos, yPos, { width: 150 }); 
           } catch (err) {
             console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
           }
@@ -135,12 +135,12 @@ module.exports.PDF = async (req, res) => {
         
         productoCount++;
         if (productoCount % maxImagenesPorFila === 0) {
-          doc.moveDown(12); // Salto entre filas
+          doc.moveDown(12); 
           filaCount++;
         }
         
       } else {
-        // Lógica general para otros tipos
+        // Lógica general para otros tipos (Bolsos, Accesorios)
         if (productoCount === maxProductosPorPagina) {
           doc.addPage();
           productoCount = 0;
@@ -149,26 +149,27 @@ module.exports.PDF = async (req, res) => {
         const imagenes = producto.Imagenes || [];
         let yInicial = doc.y;
 
-        // Dibujar imágenes
-        imagenes.forEach((imagen, index) => {
-          const xPos = 50 + (index % maxImagenesPorFila) * 150; // Espaciado horizontal entre imágenes
-          try {
-            const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
-            doc.image(imagenPath, xPos, yInicial, { width:  100 });
+        if (imagenes.length > 0) {
+          imagenes.forEach((imagen, idx) => {
+            const xPos = 50 + (idx % maxImagenesPorFila) * 150; 
+            try {
+              const imagenPath = path.join(__dirname, '..', 'public', 'img', 'Productos', imagen);
+              doc.image(imagenPath, xPos, yInicial, { width: 100 });
 
-            if ((index + 1) % maxImagenesPorFila === 0) {
-              yInicial += 110; // Salto vertical después de llenar una fila
+              if ((idx + 1) % maxImagenesPorFila === 0) {
+                yInicial += 110; 
+              }
+            } catch (err) {
+              console.error(`Error al cargar la imagen: ${imagen}`, err);
             }
-          } catch (err) {
-            console.error(`Error al cargar la imagen: ${imagenPath}`, err);
-          }
-        });
+          });
+        }
 
         // Ajustar posición para texto después de todas las imágenes
         doc.moveDown(9);
 
         // Dividir texto si contiene comas
-        const nombreProducto = producto.Producto.split(',');
+        const nombreProducto = producto.Producto ? producto.Producto.split(',') : ["Producto sin nombre"];
         nombreProducto.forEach((linea) => {
           doc
             .fontSize(14)
@@ -180,7 +181,10 @@ module.exports.PDF = async (req, res) => {
         doc
           .fontSize(12)
           .font('Helvetica')
-          .text(`Precio: $${producto.Precio.toLocaleString('es-CO')} COP`, { align: 'right' });
+          .text(
+            `Precio: $${producto.Precio ? producto.Precio.toLocaleString('es-CO') : "N/A"} COP`,
+            { align: 'right' }
+          );
 
         // Separador
         doc
@@ -201,6 +205,7 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
+
 
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
