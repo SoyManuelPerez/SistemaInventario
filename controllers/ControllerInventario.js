@@ -105,11 +105,11 @@ module.exports.PDF = async (req, res) => {
       return res.status(400).send("Tabla no válida");
     }
 
-    // Filtrar productos por tipo y cantidad mayor a 0
+    // Filtrar productos por tipo y cantidad mayor a 0 y ORDENAR alfabéticamente por nombre
     const productos = await Productos.find({
       Tipo: tipo,
       Cantidad: { $gt: 0 },
-    });
+    }).sort({ Producto: 1 }); // Orden ascendente (A → Z)
 
     const doc = new PDFDocument();
 
@@ -233,6 +233,7 @@ module.exports.PDF = async (req, res) => {
     res.status(500).send("Error al generar el PDF");
   }
 };
+
 // Eliminar Producto
 module.exports.eliminar = async (req, res) => {
   try {
