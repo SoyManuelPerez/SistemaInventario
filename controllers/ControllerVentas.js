@@ -3,6 +3,7 @@ const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
 const jsonwebtoken = require('jsonwebtoken');
 const path = require('path');
+const fs = require('fs');
 dotenv.config();
 //Mostrar Catalogo
 module.exports.mostrar = (req, res) => {
@@ -55,17 +56,17 @@ exports.pdf = (req, res) => {
     }
   });
 };
-//Eliminar Venta y PDF
+
+
 module.exports.eliminarPedido = async (req, res) => {
-    const id = req.params.id;  
-    try {
-      // Buscar el pedido en la base de datos
-      const pedido = await Producto.findById(id);
-      if (!pedido) {
-        console.log("Pedido no encontrado.");
-        return res.status(404).redirect('/Ventas');
-      }
-      const pdfPath = path.join(__dirname, 'public', 'pdf', pedido.url); 
+  const id = req.params.id;
+
+  try {
+    const pedido = await Producto.findById(id);
+
+    if (pedido && pedido.url) {
+      const pdfPath = path.join(__dirname, 'public', 'pdf', pedido.url);
+
       fs.unlink(pdfPath, (err) => {
         if (err) {
           console.error("Error al eliminar el archivo PDF:", err.message);
@@ -73,30 +74,43 @@ module.exports.eliminarPedido = async (req, res) => {
           console.log("Archivo PDF eliminado:", pdfPath);
         }
       });
-      await Producto.findByIdAndDelete(id);
-      res.redirect('/Ventas');
-    } catch (error) {
-      console.error("Error al eliminar el pedido:", error);
-      res.status(500).send("Hubo un error al procesar la eliminación del pedido");
+    } else {
+      console.log("Pedido no encontrado o no tiene PDF.");
     }
+
+    await Producto.findByIdAndDelete(id);  // Esto se ejecuta siempre, exista o no el pedido
+    res.redirect('/Ventas');
+
+  } catch (error) {
+    console.error("Error al eliminar el pedido:", error);
+    res.status(500).send("Hubo un error al procesar la eliminación del pedido");
+  }
 };
-  
 module.exports.Actualizar = async (req, res) => {
   const { id } = req.params;
   const { nuevoEstado } = req.body;
 
   try {
-    const pedido = await Producto.findById(id);
-    if (!pedido) {
-      return res.status(404).send("Pedido no encontrado");
+    // Validar si se proporcionó un nuevo estado
+    if (!nuevoEstado) {
+      return res.status(400).send("Debe seleccionar un nuevo estado.");
     }
 
+    // Buscar el pedido por ID
+    const pedido = await Producto.findById(id);
+
+    if (!pedido) {
+      return res.status(404).send("Pedido no encontrado.");
+    }
+
+    // Actualizar el estado del pedido
     pedido.Estado = nuevoEstado;
     await pedido.save();
 
+    console.log(`Estado del pedido ${id} actualizado a: ${nuevoEstado}`);
     res.redirect('/Ventas');
   } catch (error) {
     console.error("Error al actualizar el estado del pedido:", error);
-    res.status(500).send("Hubo un error al actualizar el estado");
+    res.status(500).send("Hubo un error al actualizar el estado del pedido.");
   }
 };
