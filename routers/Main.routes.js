@@ -11,6 +11,10 @@ router.get('/',(req,res)=>{
 router.get('/Catalogo',Catalogo.mostrar,(req,res)=>{
     res.render('Catalogo')
 });
+router.get('/Cliente',Catalogo.mostrarCliente,(req,res)=>{
+    res.render('Cliente')
+});
+
 router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
     res.render('Inventario')
 });
