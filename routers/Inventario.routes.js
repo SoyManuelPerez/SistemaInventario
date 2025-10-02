@@ -17,5 +17,7 @@ router.post('/EditarBolso',Inventario.editarBolso)
 //Crear Producto
 router.post('/CrearProducto',Inventario.Crear)
 
-  
+  router.get('/Cliente',Inventario.mostrarCliente,(req,res)=>{
+    res.render('Cliente')
+});
 module.exports= router

@@ -494,3 +494,17 @@ function configureGitRemote(callback) {
     callback(err);
   });
 }
+//Mostrar Catalogo
+module.exports.mostrarCliente = (req, res) => {
+  Promise.all([
+    Productos.find({ Cantidad: { $gt: 0 } }),
+  ]).then(([Producto]) => {
+    res.render('Catalogo', {
+        Producto: Producto,
+    });
+  })
+  .catch(err => {
+    console.log(err, 'Error mostrando datos');
+    res.status(500).send('Error mostrando datos');
+  });
+}
