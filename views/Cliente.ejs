@@ -8,6 +8,32 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ==== BOTÓN FLOTANTE WHATSAPP ==== */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      color: white;
+      border-radius: 50%;
+      padding: 15px;
+      font-size: 28px;
+      z-index: 1000;
+      transition: transform 0.2s ease;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      background-color: #20b857;
+      color: white;
+    }
+
+    /* ==== ANIMACIÓN SUAVE AL MOSTRAR/OCULTAR ==== */
+    .d-none {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
   <!-- Bienvenida -->
@@ -28,15 +54,23 @@
   <!-- Contenido -->
   <main class="container">
 
-    <!-- Buscador -->
+    <!-- Buscador y filtro -->
     <div class="row my-4">
-      <div class="col">
+      <div class="col-md-8 mb-2">
         <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="🔍 Buscar producto...">
+      </div>
+      <div class="col-md-4">
+        <select id="categoriaSelect" class="form-select shadow-sm">
+          <option value="todos" selected>📦 Mostrar todos</option>
+          <option value="correas">🧍 Correas</option>
+          <option value="bolsos">👜 Bolsos</option>
+          <option value="accesorios">💍 Accesorios</option>
+        </select>
       </div>
     </div>
 
     <!-- ==================== SECCIÓN CORREAS ==================== -->
-    <section class="mb-5">
+    <section class="mb-5 categoria-seccion" id="correasSection">
       <h3 class="text-primary border-bottom pb-2">Correas</h3>
       <div class="row" id="correasContainer">
         <% Producto.filter(p => p.Tipo === 'Correa' && p.Cantidad > 0).forEach((Producto) => { %>
@@ -61,20 +95,24 @@
 
                 <!-- Tallas dinámicas SOLO si hay stock -->
                 <div class="tallas mb-3">
-                  <label class="form-label fw-bold">Selecciona una talla</label>
-                  <div class="d-flex flex-wrap gap-2">
-                    <% for (let talla = 30; talla <= 46; talla += 2) { %>
-                      <% if (Producto['T' + talla] > 0) { %>
-                        <label class="btn btn-outline-primary flex-fill">
-                          <input type="radio" 
-                                 name="tallaSeleccionada-<%= Producto.id %>" 
-                                 value="T<%= talla %>" 
-                                 class="d-none">
-                          T<%= talla %> (<%= Producto['T' + talla] %>)
-                        </label>
+                  <% let tieneTallas = false; %>
+                  <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) tieneTallas = true; } %>
+                  <% if (tieneTallas) { %>
+                    <label class="form-label fw-bold">Selecciona una talla</label>
+                    <div class="d-flex flex-wrap gap-2">
+                      <% for (let talla = 30; talla <= 46; talla += 2) { %>
+                        <% if (Producto['T' + talla] > 0) { %>
+                          <label class="btn btn-outline-primary flex-fill">
+                            <input type="radio" 
+                                  name="tallaSeleccionada-<%= Producto.id %>" 
+                                  value="T<%= talla %>" 
+                                  class="d-none">
+                            T<%= talla %> (<%= Producto['T' + talla] %>)
+                          </label>
+                        <% } %>
                       <% } %>
-                    <% } %>
-                  </div>
+                    </div>
+                  <% } %>
                 </div>
 
                 <!-- Formulario -->
@@ -94,78 +132,5 @@
     </section>
 
     <!-- ==================== SECCIÓN BOLSOS ==================== -->
-    <section class="mb-5">
-      <h3 class="text-primary border-bottom pb-2">Bolsos</h3>
-      <div class="row" id="bolsosContainer">
-        <% Producto.filter(p => p.Tipo === 'Bolso' && p.Cantidad > 0).forEach((Producto) => { %>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-
-              <!-- Imagen -->
-              <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top" alt="Imagen de <%= Producto.Producto %>">
-
-              <!-- Info -->
-              <div class="card-body">
-                <h5 class="card-title text-truncate"><%= Producto.Producto %></h5>
-                <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
-
-                <!-- Formulario -->
-                <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
-                  <div class="mb-3">
-                    <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
-                    <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1">
-                  </div>
-                  <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
-                  <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    </section>
-
-    <!-- ==================== SECCIÓN ACCESORIOS ==================== -->
-    <section class="mb-5">
-      <h3 class="text-primary border-bottom pb-2">Accesorios</h3>
-      <div class="row" id="accesoriosContainer">
-        <% Producto.filter(p => p.Tipo === 'Accesorios' && p.Cantidad > 0).forEach((Producto) => { %>
-          <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-            <div class="card h-100 shadow-sm border-0">
-
-              <!-- Imagen -->
-              <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top" alt="Imagen de <%= Producto.Producto %>">
-
-              <!-- Info -->
-              <div class="card-body">
-                <h5 class="card-title text-truncate"><%= Producto.Producto %></h5>
-                <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
-
-                <!-- Formulario -->
-                <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
-                  <div class="mb-3">
-                    <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
-                    <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1">
-                  </div>
-                  <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
-                  <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    </section>
-
-    <!-- Mensaje cuando no hay productos -->
-    <div id="noProductMessage" class="text-center mt-4 d-none">
-      <h3 class="text-muted">😿 Producto no encontrado.</h3>
-    </div>
-  </main>
-
-  <!-- Scripts -->
-  <script src="js/buscador.js"></script>
-  <script src="js/Alert.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <section class="mb-5 categoria-seccion" id="bolsosSection">
+      <h3 class="text-primary
