@@ -364,7 +364,23 @@ module.exports.editar = async (req, res) => {
     res.status(500).send("Error al actualizar el producto tipo correa.");
   }
 };
-
+module.exports.actualizarInventario = async(req,res)=>{
+  await Productos.updateMany(
+  {
+    Tipo: "Correa",
+    T30: 0,
+    T32: 0,
+    T34: 0,
+    T36: 0,
+    T38: 0,
+    T40: 0,
+    T42: 0,
+    T44: 0,
+    T46: 0
+  },
+  { $set: { Cantidad: 0 } }
+);
+}
 // Mostrar productos en Inventario
 module.exports.mostrarInventario = async (req, res) => {
   const token = req.cookies.jwt;
