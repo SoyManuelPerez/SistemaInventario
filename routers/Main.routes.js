@@ -19,6 +19,9 @@ router.post('/AgregarCartCliente/:id',Cart.Crear);
 router.get('/cart',Cart.mostrar,(req,res)=>{
     res.render('cart')
 })
+router.get('/eliminarcart/:id',Cart.Eliminarcart,(req,res)=>{
+    res.render('cart')
+})
 router.post('/Agregarcart/:id',Pedido.AgregarCart);
 
 router.post('/ActualizarEstado/:id',Ventas.Actualizar);
