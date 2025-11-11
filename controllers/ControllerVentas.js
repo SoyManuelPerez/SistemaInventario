@@ -57,7 +57,6 @@ exports.pdf = (req, res) => {
   });
 };
 
-
 module.exports.eliminarPedido = async (req, res) => {
   const id = req.params.id;
 

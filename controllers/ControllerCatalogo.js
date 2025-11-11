@@ -5,7 +5,7 @@ const jsonwebtoken = require('jsonwebtoken');
 dotenv.config();
 //Mostrar Catalogo
 module.exports.mostrar = (req, res) => {
-    const token = req.cookies.jwt;
+  const token = req.cookies.jwt;
   let User = "";
   if (token) {
     jsonwebtoken.verify(token, process.env.JWT_SECRET, (err, decoded) => {

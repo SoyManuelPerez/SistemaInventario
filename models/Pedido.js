@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const PedidoSchema = new mongoose.Schema({
+  Cart: String,
   Producto: String,
   Imagen: String,
   Cantidad: Number,
