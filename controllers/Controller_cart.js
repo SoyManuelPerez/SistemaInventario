@@ -10,7 +10,7 @@ module.exports.Crear = async (req, res) => {
     const id = req.params.id;
     const paquete = await Productos.findById(id).lean().exec();
     const Producto = paquete.Producto;
-    const Imagen = paquete.Imagen;
+    const Imagen = paquete.Imagenes;
     const Precio = paquete.Precio;
 
     // Buscar si ya existe un carrito con el mismo Cart y Producto
