@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken')
 const dotenv = require('dotenv')
 const Carrito = require('../models/cart');
-const Productos = require('../models/Productos')
+const Productos = require('../models/Producto')
 dotenv.config();
 module.exports.Crear = async (req, res) => {
   try {
