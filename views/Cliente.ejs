@@ -119,7 +119,7 @@
                 </div>
 
                 <!-- Formulario -->
-                <form id="agregarCartForm-<%= Producto.id %>" action="/Agregarcart/<%= Producto.id %>" method="POST">
+                <form id="agregarCartForm-<%= Producto.id %>" action="/AgregarCartCliente/<%= Producto.id %>" method="POST">
                   <div class="mb-3">
                     <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1">

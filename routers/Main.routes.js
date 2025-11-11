@@ -4,6 +4,7 @@ const Ventas = require('../controllers/ControllerVentas')
 const Estadistica = require('../controllers/ControllerEstadistica')
 const Inventario = require('../controllers/ControllerInventario')
 const Pedido = require('../controllers/ControllerPedido')
+const Cart = require('../controllers/Controller_cart')
 const router = express.Router();
 router.get('/',(req,res)=>{
     res.render('Login')
@@ -14,6 +15,10 @@ router.get('/Catalogo',Catalogo.mostrar,(req,res)=>{
 router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
     res.render('Inventario')
 });
+router.post('/AgregarCartCliente/:id',Cart.Crear);
+router.get('/cart',Cart.mostrar,(req,res)=>{
+    res.render('cart')
+})
 router.post('/Agregarcart/:id',Pedido.AgregarCart);
 
 router.post('/ActualizarEstado/:id',Ventas.Actualizar);

@@ -3,25 +3,6 @@ const dotenv = require('dotenv')
 const Carrito = require('../models/cart');
 const Productos = require('../models/Productos')
 dotenv.config();
-module.exports.Cookie = (req, res) => {
-  if (!req.cookies.EusseCueros) {
-    const token = jsonwebtoken.sign(
-      {}, 
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRATION }
-    );
-
-    const cookieOption = {
-      expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
-      httpOnly: true,
-      path: "/"
-    };
-    res.cookie("EusseCueros", token, cookieOption);
-  }
- 
-  res.render('index')
-};
-
 module.exports.Crear = async (req, res) => {
   try {
     const Cantidad = parseInt(req.body.cantidad, 10);
