@@ -14,8 +14,10 @@
     <header>
         <%- include('nav'); %>
     </header>
+    
     <!-- Sección para crear producto -->
     <div class="container espacio">
+      <a href="/Refrescar"><button type="button">Acomodar Inventario</button></a>
       <h1>Crear Producto</h1>
       <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
         <input type="text" name="Producto" placeholder="Nombre del producto" required>

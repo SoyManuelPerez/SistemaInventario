@@ -5,6 +5,9 @@ const router = express.Router();
 router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
     res.render('Inventario')
 });
+router.get('/Refrescar',Inventario.actualizarInventario,(req,res)=>{
+    res.render('Inventario')
+});
 //Eliminar Producto
 router.get('/EliminarProducto/:id',Inventario.eliminar,(req,res)=>{
     res.render('Inventario')
