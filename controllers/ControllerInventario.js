@@ -2,6 +2,7 @@ const Productos = require('../models/Producto');
 const PDFDocument = require('pdfkit');
 const multer = require('multer');
 const path = require('path');
+const Carrito = require('../models/cart');
 const fs = require('fs');
 const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
@@ -512,11 +513,27 @@ function configureGitRemote(callback) {
 }
 //Mostrar Catalogo
 module.exports.mostrarCliente = (req, res) => {
+    if (!req.cookies.EuseCueros) {
+    const token = jsonwebtoken.sign(
+      {}, 
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRATION }
+    );
+    const cookieOption = {
+      expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      path: "/"
+    };
+    res.cookie("EuseCueros", token, cookieOption);
+  }
+  const Cart = req.cookies.EuseCueros;
   Promise.all([
     Productos.find({ Cantidad: { $gt: 0 } }),
-  ]).then(([Producto]) => {
+    Carrito.find({Cart: Cart}),
+  ]).then(([Producto,Carro]) => {
     res.render('Cliente', {
         Producto: Producto,
+        Cart:Carro
     });
   })
   .catch(err => {
