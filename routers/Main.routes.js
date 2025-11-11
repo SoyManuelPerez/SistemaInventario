@@ -16,6 +16,7 @@ router.get('/Inventario',Inventario.mostrarInventario,(req,res)=>{
     res.render('Inventario')
 });
 router.post('/AgregarCartCliente/:id',Cart.Crear);
+
 router.get('/cart',Cart.mostrar,(req,res)=>{
     res.render('cart')
 })
