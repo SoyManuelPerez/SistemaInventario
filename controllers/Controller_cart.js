@@ -26,7 +26,7 @@ module.exports.Crear = async (req, res) => {
       await cart.save();
     }
 
-    res.render('/cart');
+    res.render('cart');
   } catch (err) {
     console.error(err);
     res.status(500).send("Error interno del servidor");
