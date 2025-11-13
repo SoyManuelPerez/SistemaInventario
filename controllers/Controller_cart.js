@@ -12,6 +12,7 @@ module.exports.Crear = async (req, res) => {
     const Producto = paquete.Producto;
     const Imagen = paquete.Imagenes;
     const Precio = paquete.Precio;
+    const Talla = req.body.tallaSeleccionada;
 
     // Buscar si ya existe un carrito con el mismo Cart y Producto
     const existingCart = await Carrito.findOne({ Cart, Producto }).exec();
