@@ -1,13 +1,15 @@
-// === CAMBIO DE TALLA Y ENVÍO ===
+// === CAMBIO DE TALLA Y ENVÍO DEL FORMULARIO ===
 document.addEventListener('DOMContentLoaded', function () {
-  // Escucha cambios en las tallas
+  console.log("✅ Script de tallas cargado");
+
+  // Detecta selección de talla
   document.querySelectorAll('input[type="radio"][name^="tallaSeleccionada-"]').forEach((radio) => {
     radio.addEventListener('change', function () {
       const productId = this.name.split('-')[1];
       const form = document.querySelector(`#agregarCartForm-${productId}`);
-      let tallaInput = form.querySelector('input[name="tallaSeleccionada"]');
 
-      // Si no existe el input oculto, créalo dentro del form
+      // Buscar o crear el input oculto
+      let tallaInput = form.querySelector('input[name="tallaSeleccionada"]');
       if (!tallaInput) {
         tallaInput = document.createElement('input');
         tallaInput.type = 'hidden';
@@ -15,14 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
         form.appendChild(tallaInput);
       }
 
-      // Actualiza el valor seleccionado
+      // Actualiza valor
       tallaInput.value = this.value;
-
-      console.log(`✅ Talla seleccionada para producto ${productId}:`, this.value);
+      console.log(`👕 Talla seleccionada (${productId}): ${this.value}`);
     });
   });
 
-  // Manejo de envío
+  // Manejar envío del formulario
   document.querySelectorAll('[id^="agregarCartForm-"]').forEach((form) => {
     const id = form.id.split('-')[1];
     const errorDiv = document.getElementById(`error-message-${id}`);
@@ -35,28 +36,30 @@ document.addEventListener('DOMContentLoaded', function () {
       errorDiv.textContent = '';
 
       const tallaInput = form.querySelector('input[name="tallaSeleccionada"]');
-      const hasTallas = !!tallaContainer;
+      const hasTallas = tallaContainer && tallaContainer.querySelectorAll('input[type="radio"]').length > 0;
 
       // Validaciones
       if (hasTallas && (!tallaInput || !tallaInput.value)) {
         errorDiv.style.display = 'block';
-        errorDiv.textContent = 'Por favor, selecciona una talla antes de agregar.';
+        errorDiv.textContent = '⚠️ Por favor selecciona una talla.';
         return;
       }
 
       if (!cantidadInput.value || cantidadInput.value <= 0) {
         errorDiv.style.display = 'block';
-        errorDiv.textContent = 'Por favor, ingresa una cantidad válida.';
+        errorDiv.textContent = '⚠️ Ingresa una cantidad válida.';
         return;
       }
 
-      // Crear objeto JSON con los valores del formulario
+      // Construir JSON
       const formData = new FormData(form);
       const jsonData = {};
       formData.forEach((v, k) => (jsonData[k] = v));
 
-      console.log('📦 Datos que se enviarán:', jsonData);
+      // Confirmar valores antes de enviar
+      console.log('📦 Enviando datos al servidor:', jsonData);
 
+      // Deshabilitar botón
       const submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Agregando...';
@@ -71,12 +74,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const resJson = await res.json();
         if (!res.ok) {
           errorDiv.style.display = 'block';
-          errorDiv.textContent = resJson.message || 'Hubo un error al agregar.';
+          errorDiv.textContent = resJson.message || 'Error al agregar el producto.';
         } else {
+          console.log('🟢 Producto agregado correctamente:', resJson);
           window.location.href = '/cart';
         }
       } catch (err) {
-        console.error('❌ Error de conexión:', err);
+        console.error('❌ Error de red:', err);
         errorDiv.style.display = 'block';
         errorDiv.textContent = 'Error de conexión o servidor.';
       } finally {
