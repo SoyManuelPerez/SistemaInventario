@@ -43,15 +43,10 @@ module.exports.Crear = async (req, res) => {
 
 module.exports.mostrar = async (req, res) => {
   try {
-    const cartToken = req.cookies.EusseCueros;
-
-    // Si no hay cookie, mostrar carrito vacío
-    if (!cartToken) {
-      return res.render("cart", { Cart: [] });
-    }
+    const Cart = req.cookies.EusseCueros;
 
     // Buscar productos en base al token
-    const carrito = await Carrito.find({ Cart: cartToken }).lean();
+    const carrito = await Carrito.find({ Cart: Cart }).lean();
 
     // Renderizar con datos
     res.render("cart", { Cart: carrito });

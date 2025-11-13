@@ -533,7 +533,7 @@ module.exports.mostrarCliente = async (req, res) => {
         path: "/"
       };
 
-      res.cookie("EuseCueros", carroToken, cookieOption);
+      res.cookie("EusseCueros", carroToken, cookieOption);
     }
 
     // Obtener productos y carrito en paralelo
