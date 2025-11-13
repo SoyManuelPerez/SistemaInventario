@@ -23,7 +23,7 @@ module.exports.Crear = async (req, res) => {
       await existingCart.save();
     } else {
       // Si no existe, crear un nuevo carrito
-      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio });
+      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio,Talla });
       await cart.save();
     }
 
@@ -34,17 +34,28 @@ module.exports.Crear = async (req, res) => {
   }
 };
 
-module.exports.mostrar = (req, res) => {
-  const Cart = req.cookies.EusseCueros;
-  Carrito.find({Cart: Cart}).then(result => result || [])
-  .then(result => {
-    res.render('cart', {Cart: result});
-  })
-  .catch(err => {
-    console.error('Error mostrando datos', err);
-    res.status(500).send('Error mostrando datos');
-  });
+module.exports.mostrar = async (req, res) => {
+  try {
+    // Leer la cookie
+    const cartToken = req.cookies.EusseCueros;
+
+    // Si no hay cookie, se puede devolver carrito vacío o redirigir al cliente
+    if (!cartToken) {
+      return res.render("cart", { Cart: [] });
+    }
+
+    // Buscar los productos del carrito asociados a ese token
+    const carrito = await Carrito.find({ Cart: cartToken });
+
+    // Renderizar la vista con el resultado
+    res.render("cart", { Cart: carrito });
+
+  } catch (err) {
+    console.error("Error mostrando datos:", err);
+    res.status(500).send("Error mostrando datos");
+  }
 };
+
 module.exports.Eliminarcart = async (req, res) => {
   const id = req.params.id;
   try {
