@@ -4,41 +4,64 @@ const Carrito = require('../models/cart');
 const Productos = require('../models/Producto')
 dotenv.config();
 module.exports.Crear = async (req, res) => {
-  console.log(req.body)
   try {
-    const Cantidad = parseInt(req.body.cantidad, 10);
     const Cart = req.cookies.EusseCueros;
     const id = req.params.id;
+    const Cantidad = parseInt(req.body.cantidad, 10);
+    const Talla = req.body.tallaSeleccionada; // 👈 viene del input oculto
+    console.log("🧾 Datos recibidos del cliente:", req.body);
+
+    // Verificar existencia de cookie
+    if (!Cart) {
+      return res.status(400).json({ message: "Cookie del carrito no encontrada." });
+    }
+
+    // Validaciones básicas
+    if (!id) {
+      return res.status(400).json({ message: "ID de producto faltante." });
+    }
+
+    if (isNaN(Cantidad) || Cantidad <= 0) {
+      return res.status(400).json({ message: "Cantidad inválida." });
+    }
+
+    // Obtener producto
     const paquete = await Productos.findById(id).lean().exec();
+    if (!paquete) {
+      return res.status(404).json({ message: "Producto no encontrado." });
+    }
+
     const Producto = paquete.Producto;
     const Imagen = paquete.Imagenes;
     const Precio = paquete.Precio;
-    const Talla = req.body.tallaSeleccionada;
 
-    // Buscar si ya existe un carrito con el mismo Cart y Producto
-    const existingCart = await Carrito.findOne({ Cart, Producto }).exec();
-
-    if (existingCart) {
-      // Si existe, actualizar la cantidad sumando la nueva cantidad
-      existingCart.Cantidad += Cantidad;
-      await existingCart.save();
-    } else {
-      // Si no existe, crear un nuevo carrito
-      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio, Talla });
-      await cart.save();
+    // 🔎 Si el producto tiene tallas, verificar que se haya seleccionado una
+    const tieneTallas = Object.keys(paquete).some(key => key.startsWith("T") && paquete[key] > 0);
+    if (tieneTallas && (!Talla || Talla.trim() === "")) {
+      return res.status(400).json({ message: "Debes seleccionar una talla antes de agregar." });
     }
 
-    // 🔧 Buscar el carrito actualizado para enviarlo a la vista
-    const carritoActualizado = await Carrito.find({ Cart }).lean();
+    // 🧩 Buscar si ya existe el producto en el carrito con misma talla
+    const existingCart = await Carrito.findOne({ Cart, Producto, Talla }).exec();
 
-    // 🔧 Renderizar pasando la variable Cart
-    res.render('cart', { Cart: carritoActualizado });
+    if (existingCart) {
+      existingCart.Cantidad += Cantidad;
+      await existingCart.save();
+      console.log("🟡 Producto actualizado en carrito:", existingCart);
+    } else {
+      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio, Talla });
+      await cart.save();
+      console.log("🟢 Nuevo producto agregado:", cart);
+    }
 
+    // Respuesta correcta en JSON
+    res.status(200).json({ message: "Producto agregado al carrito correctamente." });
   } catch (err) {
-    console.error("Error en Crear:", err);
-    res.status(500).send("Error interno del servidor");
+    console.error("❌ Error interno al agregar al carrito:", err);
+    res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 
 
 module.exports.mostrar = async (req, res) => {
