@@ -515,7 +515,7 @@ function configureGitRemote(callback) {
 module.exports.mostrarCliente = async (req, res) => {
   try {
     // Verificar si existe la cookie
-    let carroToken = req.cookies.EuseCueros;
+    let carroToken = req.cookies.EusseCueros;
 
     if (!carroToken) {
       // Crear token si no existe
