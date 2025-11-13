@@ -103,7 +103,7 @@
                 <label class="form-label fw-bold">Selecciona una talla</label>
                 <div class="d-flex flex-wrap gap-2" id="tallasContainer-<%= Producto.id %>">
                   <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) { %>
-                  <input type="radio" name="tallaSeleccionada"
+                  <input type="radio" name="tallaSeleccionada-<%= Producto.id %>"
                     data-product-id="<%= Producto.id %>"
                     id="talla-<%= Producto.id %>-<%= talla %>"
                     value="T<%= talla %>" class="btn-check">
