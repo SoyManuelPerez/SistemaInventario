@@ -34,7 +34,7 @@ module.exports.Crear = async (req, res) => {
   }
 };
 
-mmodule.exports.mostrar = async (req, res) => {
+module.exports.mostrar = async (req, res) => {
   try {
     const cartToken = req.cookies.EusseCueros;
 
