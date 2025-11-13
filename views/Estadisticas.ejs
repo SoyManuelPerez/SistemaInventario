@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +17,10 @@
 </header>
 
 <div class="container mt-4">
-  <h1 class="text-center">Estadística de Productos</h1>
+  <h1 class="text-center mb-4">📊 Estadística de Productos</h1>
+
   <% 
+  // === Calcular inversión total por tipo ===
   let totalGananciasPorTipo = {};
   Producto.forEach(producto => {
     const ganancia = producto.Cantidad * producto.Precio;
@@ -27,18 +29,45 @@
     }
     totalGananciasPorTipo[producto.Tipo] += ganancia;
   });
-%>
 
-  <h2 class="mt-4">Resumen de Inversion por tipo</h2>
-  <ul class="list-group">
+  // === Calcular Top 5 productos más vendidos ===
+  const topProductos = [...Producto]
+    .sort((a, b) => (b.CantidadVenta || 0) - (a.CantidadVenta || 0))
+    .slice(0, 5);
+  %>
+
+  <!-- Sección de inversión -->
+  <h2 class="mt-4">💰 Resumen de Inversión por Tipo</h2>
+  <ul class="list-group mb-5">
     <% for (const [tipo, totalGanancia] of Object.entries(totalGananciasPorTipo)) { %>
       <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span><strong><%= tipo %>:</strong></span>
+        <span><strong><%= tipo %></strong></span>
         <span>$<%= totalGanancia.toLocaleString('es-CO') %></span>
       </li>
     <% } %>
   </ul>
-</div>
 
+  <!-- 🔥 Nueva sección: Top 5 productos más vendidos -->
+  <h2 class="mt-4">🏆 Top 5 Productos Más Vendidos</h2>
+  <table class="table table-striped table-hover mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Producto</th>
+        <th scope="col">Cantidad Vendida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% topProductos.forEach((p, index) => { %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= p.Producto %></td>
+          <td><%= p.CantidadVenta || 0 %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+</div>
 </body>
 </html>
