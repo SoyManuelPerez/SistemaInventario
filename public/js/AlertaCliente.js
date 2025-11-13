@@ -1,27 +1,28 @@
 // === CAMBIO DE TALLA Y ENVÍO ===
 document.addEventListener('DOMContentLoaded', function () {
-  // Escucha cambios en las tallas de cada producto
+  // Escucha cambios en las tallas
   document.querySelectorAll('input[type="radio"][name^="tallaSeleccionada-"]').forEach((radio) => {
     radio.addEventListener('change', function () {
-      const productId = this.name.split('-')[1]; // obtiene el id del producto
+      const productId = this.name.split('-')[1];
       const form = document.querySelector(`#agregarCartForm-${productId}`);
-      let tallaInput = document.getElementById(`tallaSeleccionada-${productId}`);
+      let tallaInput = form.querySelector('input[name="tallaSeleccionada"]');
 
-      // Si no existe el input oculto, lo crea
+      // Si no existe el input oculto, créalo dentro del form
       if (!tallaInput) {
         tallaInput = document.createElement('input');
         tallaInput.type = 'hidden';
-        tallaInput.id = `tallaSeleccionada-${productId}`;
         tallaInput.name = 'tallaSeleccionada';
         form.appendChild(tallaInput);
       }
 
       // Actualiza el valor seleccionado
       tallaInput.value = this.value;
+
+      console.log(`✅ Talla seleccionada para producto ${productId}:`, this.value);
     });
   });
 
-  // Manejo de envío del formulario
+  // Manejo de envío
   document.querySelectorAll('[id^="agregarCartForm-"]').forEach((form) => {
     const id = form.id.split('-')[1];
     const errorDiv = document.getElementById(`error-message-${id}`);
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
       errorDiv.style.display = 'none';
       errorDiv.textContent = '';
 
-      const tallaInput = document.getElementById(`tallaSeleccionada-${id}`);
+      const tallaInput = form.querySelector('input[name="tallaSeleccionada"]');
       const hasTallas = !!tallaContainer;
 
       // Validaciones
@@ -49,14 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      // Construir JSON del formulario
+      // Crear objeto JSON con los valores del formulario
       const formData = new FormData(form);
       const jsonData = {};
       formData.forEach((v, k) => (jsonData[k] = v));
 
-      if (hasTallas && tallaInput) {
-        jsonData['tallaSeleccionada'] = tallaInput.value;
-      }
+      console.log('📦 Datos que se enviarán:', jsonData);
 
       const submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
@@ -77,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
           window.location.href = '/cart';
         }
       } catch (err) {
+        console.error('❌ Error de conexión:', err);
         errorDiv.style.display = 'block';
         errorDiv.textContent = 'Error de conexión o servidor.';
       } finally {

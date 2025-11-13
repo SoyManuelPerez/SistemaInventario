@@ -107,7 +107,7 @@
                 <div class="cart-item-actions">
                   <% let valortotal = cartItem.Cantidad * cartItem.Precio; %>
                   <p><strong>Total:</strong><br> $<%= valortotal.toLocaleString('es-CO') %> COP</p>
-                  <a href="/eliminarcart/<%= cartItem.id %>" class="text-danger small d-block mt-2">Remover</a>
+                  <a href="/eliminarcart/<%= cartItem._id %>" class="text-danger small d-block mt-2">Remover</a>
                 </div>
 
               </div>
@@ -118,7 +118,7 @@
           <% 
             let message = "Hola, me gustaría cotizar los siguientes productos:\n";
             Cart.forEach(cartItem => {
-              message += `${cartItem.Producto} - Cantidad: ${cartItem.Cantidad} - Talla:${cartItem.Talla}- Precio unitario: $${cartItem.Precio.toLocaleString('es-CO')} COP\n`;
+              message += `${cartItem.Producto} - Cantidad: ${cartItem.Cantidad} - Talla:${cartItem.Cantidad}- Precio unitario: $${cartItem.Precio.toLocaleString('es-CO')} COP\n`;
             });
             message += `Total: $${valor.toLocaleString('es-CO')} COP`;
             let url = `https://wa.me/573136300655?text=${encodeURIComponent(message)}`;
