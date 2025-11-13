@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
+
   <style>
     .whatsapp-float {
       position: fixed;
@@ -39,79 +40,176 @@
   <!-- Bienvenida -->
   <section class="text-center py-4">
     <h2 class="fw-bold">Bienvenido a <span class="text-primary">Eusse Cueros</span></h2>
-  </section> <!-- Botón Pedido -->
+  </section>
+
+  <!-- Botón Pedido -->
   <div class="container flex-wrapper">
     <div class="content">
-      <div class="cart"> <a class="nav-link active" aria-current="page" href="/cart"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
-            <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
-          </svg> <% let cantida = 0 %> <% Cart.forEach((Cart) => { cantida += 1 }) %> <div class="notification" id="cart-count"><%= cantida %></div> </a> </div>
+      <div class="cart">
+        <a class="nav-link active" aria-current="page" href="/cart">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-cart4"
+            viewBox="0 0 16 16">
+            <path
+              d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0" />
+          </svg>
+          <% let cantida = 0 %>
+          <% Cart.forEach((Cart) => { cantida += 1 }) %>
+          <div class="notification" id="cart-count"><%= cantida %></div>
+        </a>
+      </div>
     </div>
-  </div> <!-- Contenido -->
+  </div>
+
+  <!-- Contenido -->
   <main class="container">
     <div class="row my-4">
-      <div class="col-md-4"> <select id="categoriaSelect" class="form-select shadow-sm">
+      <div class="col-md-4">
+        <select id="categoriaSelect" class="form-select shadow-sm">
           <option value="todos" selected>📦 Mostrar todos</option>
           <option value="correas">🧍 Correas</option>
           <option value="bolsos">👜 Bolsos</option>
           <option value="accesorios">💍 Accesorios</option>
-        </select> </div>
-    </div> <!-- SECCIÓN CORREAS -->
+        </select>
+      </div>
+    </div>
+
+    <!-- SECCIÓN CORREAS -->
     <section class="mb-5 categoria-seccion" id="correasSection">
       <h3 class="text-primary border-bottom pb-2">Correas</h3>
-      <div class="row" id="correasContainer"> <% Producto.filter(p => p.Tipo === 'Correa' && p.Cantidad > 0).forEach((Producto) => { %> <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+      <div class="row" id="correasContainer">
+        <% Producto.filter(p => p.Tipo === 'Correa' && p.Cantidad > 0).forEach((Producto) => { %>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
           <div class="card h-100 shadow-sm border-0">
             <div id="carousel-<%= Producto.id %>" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner"> <% Producto.Imagenes.forEach((imagen, index) => { %> <div class="carousel-item <%= index === 0 ? 'active' : '' %>"> <img src="img/Productos/<%= imagen %>" class="d-block w-100 rounded-top" alt="Imagen de <%= Producto.Producto %>"> </div> <% }) %> </div>
+              <div class="carousel-inner">
+                <% Producto.Imagenes.forEach((imagen, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <img src="img/Productos/<%= imagen %>" class="d-block w-100 rounded-top"
+                    alt="Imagen de <%= Producto.Producto %>">
+                </div>
+                <% }) %>
+              </div>
             </div>
+
             <div class="card-body">
               <h5 class="card-title text-truncate"><%= Producto.Producto %></h5>
-              <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p> <!-- Tallas -->
-              <div class="tallas mb-3"> <% let tieneTallas = false; %> <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) tieneTallas = true; } %> <% if (tieneTallas) { %> <label class="form-label fw-bold">Selecciona una talla</label>
-                <div class="d-flex flex-wrap gap-2" id="tallasContainer-<%= Producto.id %>"> <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) { %> <input type="radio" name="tallaSeleccionada-<%= Producto.id %>" data-product-id="<%= Producto.id %>" id="talla-<%= Producto.id %>-<%= talla %>" value="T<%= talla %>" class="btn-check"> <label for="talla-<%= Producto.id %>-<%= talla %>" class="btn btn-outline-primary"> T<%= talla %> (<%= Producto['T' + talla] %>) </label> <% } } %> </div> <% } %>
-              </div> <!-- Formulario -->
+              <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
+
+              <!-- Tallas -->
+              <div class="tallas mb-3">
+                <% let tieneTallas = false; %>
+                <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) tieneTallas = true; } %>
+                <% if (tieneTallas) { %>
+                <label class="form-label fw-bold">Selecciona una talla</label>
+                <div class="d-flex flex-wrap gap-2" id="tallasContainer-<%= Producto.id %>">
+                  <% for (let talla = 30; talla <= 46; talla += 2) { if (Producto['T' + talla] > 0) { %>
+                  <input type="radio" name="tallaSeleccionada-<%= Producto.id %>"
+                    data-product-id="<%= Producto.id %>"
+                    id="talla-<%= Producto.id %>-<%= talla %>"
+                    value="T<%= talla %>" class="btn-check">
+                  <label for="talla-<%= Producto.id %>-<%= talla %>" class="btn btn-outline-primary">
+                    T<%= talla %> (<%= Producto['T' + talla] %>)
+                  </label>
+                  <% } } %>
+                </div>
+                <% } %>
+              </div>
+
+              <!-- Formulario -->
               <form id="agregarCartForm-<%= Producto.id %>" action="/AgregarCartCliente/<%= Producto.id %>" method="POST">
-                <div class="mb-3"> <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label> <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1"> </div> <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>"> <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
+                <div class="mb-3">
+                  <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
+                  <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1"
+                    value="1">
+                </div>
+                <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
+                <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
                 <div id="error-message-<%= Producto.id %>" class="text-danger mt-2" style="display:none;"></div>
               </form>
             </div>
           </div>
-        </div> <% }) %> </div>
-    </section> <!-- SECCIÓN BOLSOS -->
+        </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- SECCIÓN BOLSOS -->
     <section class="mb-5 categoria-seccion" id="bolsosSection">
       <h3 class="text-primary border-bottom pb-2">Bolsos</h3>
-      <div class="row" id="bolsosContainer"> <% Producto.filter(p => p.Tipo === 'Bolso' && p.Cantidad > 0).forEach((Producto) => { %> <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-          <div class="card h-100 shadow-sm border-0"> <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top" alt="Imagen de <%= Producto.Producto %>">
+      <div class="row" id="bolsosContainer">
+        <% Producto.filter(p => p.Tipo === 'Bolso' && p.Cantidad > 0).forEach((Producto) => { %>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+          <div class="card h-100 shadow-sm border-0">
+            <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top"
+              alt="Imagen de <%= Producto.Producto %>">
             <div class="card-body">
               <h5 class="card-title text-truncate"><%= Producto.Producto %></h5>
               <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
               <form id="agregarCartForm-<%= Producto.id %>" action="/AgregarCartCliente/<%= Producto.id %>" method="POST">
-                <div class="mb-3"> <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label> <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1"> </div> <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>"> <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
+                <div class="mb-3">
+                  <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
+                  <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1"
+                    value="1">
+                </div>
+                <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
+                <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
                 <div id="error-message-<%= Producto.id %>" class="text-danger mt-2" style="display:none;"></div>
               </form>
             </div>
           </div>
-        </div> <% }) %> </div>
-    </section> <!-- SECCIÓN ACCESORIOS -->
+        </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- SECCIÓN ACCESORIOS -->
     <section class="mb-5 categoria-seccion" id="accesoriosSection">
       <h3 class="text-primary border-bottom pb-2">Accesorios</h3>
-      <div class="row" id="accesoriosContainer"> <% Producto.filter(p => p.Tipo === 'Accesorios' && p.Cantidad > 0).forEach((Producto) => { %> <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-          <div class="card h-100 shadow-sm border-0"> <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top" alt="Imagen de <%= Producto.Producto %>">
+      <div class="row" id="accesoriosContainer">
+        <% Producto.filter(p => p.Tipo === 'Accesorios' && p.Cantidad > 0).forEach((Producto) => { %>
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+          <div class="card h-100 shadow-sm border-0">
+            <img src="img/Productos/<%= Producto.Imagenes[0] %>" class="card-img-top rounded-top"
+              alt="Imagen de <%= Producto.Producto %>">
             <div class="card-body">
               <h5 class="card-title text-truncate"><%= Producto.Producto %></h5>
               <p class="card-text text-success fw-bold">Precio: $<%= Producto.Precio.toLocaleString('es-CO') %></p>
               <form id="agregarCartForm-<%= Producto.id %>" action="/AgregarCartCliente/<%= Producto.id %>" method="POST">
-                <div class="mb-3"> <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label> <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1" value="1"> </div> <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>"> <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
+                <div class="mb-3">
+                  <label for="cantidad-<%= Producto.id %>" class="form-label">Cantidad</label>
+                  <input type="number" name="cantidad" id="cantidad-<%= Producto.id %>" class="form-control" min="1"
+                    value="1">
+                </div>
+                <input type="hidden" name="tipoProducto" value="<%= Producto.Tipo %>">
+                <button type="submit" class="btn btn-primary w-100 shadow-sm">Agregar al pedido</button>
                 <div id="error-message-<%= Producto.id %>" class="text-danger mt-2" style="display:none;"></div>
               </form>
             </div>
           </div>
-        </div> <% }) %> </div>
+        </div>
+        <% }) %>
+      </div>
     </section>
-  </main> <a href="https://wa.me/573136300655" target="_blank" class="whatsapp-float"> <i class="fab fa-whatsapp"></i> </a>
+  </main>
+
+  <a href="https://wa.me/573136300655" target="_blank" class="whatsapp-float">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+<script src="js/AlertaCliente"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    // === FILTRO DE CATEGORÍAS === document.getElementById('categoriaSelect').addEventListener('change', function () { const categoria = this.value; const secciones = document.querySelectorAll('.categoria-seccion'); secciones.forEach(sec => sec.classList.add('d-none')); if (categoria === 'todos') { secciones.forEach(sec => sec.classList.remove('d-none')); } else { document.getElementById(categoria + 'Section').classList.remove('d-none'); } }); 
+    // === FILTRO DE CATEGORÍAS ===
+    document.getElementById('categoriaSelect').addEventListener('change', function () {
+      const categoria = this.value;
+      const secciones = document.querySelectorAll('.categoria-seccion');
+      secciones.forEach(sec => sec.classList.add('d-none'));
+      if (categoria === 'todos') {
+        secciones.forEach(sec => sec.classList.remove('d-none'));
+      } else {
+        document.getElementById(categoria + 'Section').classList.remove('d-none');
+      }
+    });
   </script>
 </body>
-
 </html>
