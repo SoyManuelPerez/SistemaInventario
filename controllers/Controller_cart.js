@@ -34,20 +34,19 @@ module.exports.Crear = async (req, res) => {
   }
 };
 
-module.exports.mostrar = async (req, res) => {
+mmodule.exports.mostrar = async (req, res) => {
   try {
-    // Leer la cookie
     const cartToken = req.cookies.EusseCueros;
 
-    // Si no hay cookie, se puede devolver carrito vacío o redirigir al cliente
+    // Si no hay cookie, mostrar carrito vacío
     if (!cartToken) {
       return res.render("cart", { Cart: [] });
     }
 
-    // Buscar los productos del carrito asociados a ese token
-    const carrito = await Carrito.find({ Cart: cartToken });
+    // Buscar productos en base al token
+    const carrito = await Carrito.find({ Cart: cartToken }).lean();
 
-    // Renderizar la vista con el resultado
+    // Renderizar con datos
     res.render("cart", { Cart: carrito });
 
   } catch (err) {

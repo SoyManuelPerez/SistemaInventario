@@ -13,7 +13,7 @@
   <div class="flex-wrapper espacio">
     <div class="content">
       <div class="container mt-5">
-        <% if (Cart.length === 0) { %>
+        <% if (!Cart || Cart.length === 0) { %>
           <div class="text-center">
             <h1>No has agregado ningún producto</h1><br>
             <a href="/Cliente" class="btn btn-primary">Ver Catálogo</a>
