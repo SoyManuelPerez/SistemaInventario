@@ -4,6 +4,7 @@ const Carrito = require('../models/cart');
 const Productos = require('../models/Producto')
 dotenv.config();
 module.exports.Crear = async (req, res) => {
+  console.log(req.body)
   try {
     const Cantidad = parseInt(req.body.cantidad, 10);
     const Cart = req.cookies.EusseCueros;
