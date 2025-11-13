@@ -1,72 +1,82 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Manejar el cambio en las tallas
+  // Escuchar los cambios en las tallas
   document.querySelectorAll('input[type="radio"][name^="tallaSeleccionada-"]').forEach((radio) => {
     radio.addEventListener('change', function () {
       const productId = this.name.split('-')[1];
-      const tallaInput = document.getElementById(`tallaSeleccionada-${productId}`);
-      if (tallaInput) {
-        tallaInput.value = this.value;
+      let tallaInput = document.getElementById(`tallaSeleccionada-${productId}`);
+      if (!tallaInput) {
+        // Crear un input oculto si no existe (seguridad)
+        tallaInput = document.createElement('input');
+        tallaInput.type = 'hidden';
+        tallaInput.id = `tallaSeleccionada-${productId}`;
+        tallaInput.name = 'tallaSeleccionada';
+        document.querySelector(`#agregarCartForm-${productId}`).appendChild(tallaInput);
       }
+      tallaInput.value = this.value;
     });
   });
 
-  // Manejar el envío de formularios
-  const forms = document.querySelectorAll('[id^="agregarCartForm-"]');
-  forms.forEach((form) => {
+  // Manejar los formularios de "Agregar al pedido"
+  document.querySelectorAll('[id^="agregarCartForm-"]').forEach((form) => {
     const id = form.id.split('-')[1];
-    const errorMessageDiv = document.getElementById(`error-message-${id}`);
-    const tallaInput = document.getElementById(`tallaSeleccionada-${id}`);
+    const errorDiv = document.getElementById(`error-message-${id}`);
     const cantidadInput = document.getElementById(`cantidad-${id}`);
-    const hasTallas = !!tallaInput;
+    const tallaInput = document.getElementById(`tallaSeleccionada-${id}`);
+    const hasTallas = !!document.querySelector(`#tallasContainer-${id}`);
 
     form.addEventListener('submit', async function (event) {
       event.preventDefault();
-    
-      if (hasTallas && !tallaInput.value) {
-        errorMessageDiv.style.display = 'block';
-        errorMessageDiv.textContent = 'Debe seleccionar una talla válida para el producto.';
+      errorDiv.style.display = 'none';
+      errorDiv.textContent = '';
+
+      // Validar talla
+      if (hasTallas && (!tallaInput || !tallaInput.value)) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Por favor, selecciona una talla antes de agregar.';
         return;
       }
-    
-      if (cantidadInput && cantidadInput.value <= 0) {
-        errorMessageDiv.style.display = 'block';
-        errorMessageDiv.textContent = 'Por favor, ingresa una cantidad válida.';
+
+      // Validar cantidad
+      if (!cantidadInput.value || cantidadInput.value <= 0) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Por favor, ingresa una cantidad válida.';
         return;
       }
-    
+
+      // Preparar datos
       const formData = new FormData(form);
       const jsonData = {};
-    
-      formData.forEach((value, key) => {
-        jsonData[key] = value;
-      });
-    
-      if (hasTallas) {
-        jsonData["tallaSeleccionada"] = tallaInput.value;
+      formData.forEach((v, k) => jsonData[k] = v);
+      if (hasTallas && tallaInput) {
+        jsonData['tallaSeleccionada'] = tallaInput.value;
       }
+
+      // Deshabilitar botón temporalmente
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Agregando...';
+
       try {
         const res = await fetch(form.action, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(jsonData),
         });
-    
+
+        const resJson = await res.json();
         if (!res.ok) {
-          const resJson = await res.json();
-          errorMessageDiv.style.display = 'block';
-          errorMessageDiv.textContent = resJson.message || 'Hubo un error.';
-          return;
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = resJson.message || 'Hubo un error al agregar.';
+        } else {
+          window.location.href = '/cart';
         }
-    
-        errorMessageDiv.style.display = 'none';
-        window.location.href = '/cart';
-      } catch (error) {
-        errorMessageDiv.style.display = 'block';
-        errorMessageDiv.textContent = 'Error al enviar la solicitud.';
+      } catch (err) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Error de conexión o servidor.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Agregar al pedido';
       }
     });
-    
   });
 });
