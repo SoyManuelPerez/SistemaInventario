@@ -23,16 +23,22 @@ module.exports.Crear = async (req, res) => {
       await existingCart.save();
     } else {
       // Si no existe, crear un nuevo carrito
-      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio,Talla });
+      const cart = new Carrito({ Cart, Producto, Cantidad, Imagen, Precio, Talla });
       await cart.save();
     }
 
-    res.render('cart');
+    // 🔧 Buscar el carrito actualizado para enviarlo a la vista
+    const carritoActualizado = await Carrito.find({ Cart }).lean();
+
+    // 🔧 Renderizar pasando la variable Cart
+    res.render('cart', { Cart: carritoActualizado });
+
   } catch (err) {
-    console.error(err);
+    console.error("Error en Crear:", err);
     res.status(500).send("Error interno del servidor");
   }
 };
+
 
 module.exports.mostrar = async (req, res) => {
   try {
