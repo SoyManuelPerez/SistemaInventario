@@ -17,6 +17,6 @@ const Producto = new mongoose.Schema({
   Ingreso: { type: Number, default: 0 },
   Precio: { type: Number, required: true },
   Genero:{type:String, require:true},
-  CantidadVenta:{type:String, require:true}
+  CantidadVenta:{type:Number, require:true}
 });
 module.exports = mongoose.model('Producto', Producto);

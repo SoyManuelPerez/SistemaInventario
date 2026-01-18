@@ -7,8 +7,27 @@ const jsonwebtoken = require('jsonwebtoken');
 const PDFDocument = require('pdfkit');
 const { exec } = require('child_process');
 const fs = require('fs');
-
 dotenv.config();
+
+module.exports.Cookie = (req, res) => {
+  if (!req.cookies.EusseCueros) {
+    const token = jsonwebtoken.sign(
+      {}, 
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRATION }
+    );
+
+    const cookieOption = {
+      expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      path: "/"
+    };
+    res.cookie("EusseCueros", token, cookieOption);
+  }
+ 
+  res.render('index')
+};
+
 module.exports.mostrar = (req, res) => {
     const token = req.cookies.jwt;
   let User = "";
@@ -126,6 +145,7 @@ module.exports.Factura = async (req, res) => {
 module.exports.AgregarCart = async (req, res) => {
   const id = req.params.id;
   let { cantidad, tipoProducto, tallaSeleccionada } = req.body;
+
   // Validar los datos de entrada
   cantidad = parseInt(cantidad, 10);
   if (isNaN(cantidad) || cantidad <= 0) {
@@ -147,7 +167,10 @@ module.exports.AgregarCart = async (req, res) => {
     // Determinar stock disponible
     let stockDisponible = tipoProducto === 'Correa' ? producto[talla] : producto.Cantidad;
     if (!stockDisponible || stockDisponible <= 0) {
-      return res.status(400).send({ status: "Error", message: `Stock no disponible para la ${tipoProducto === 'Correa' ? `talla ${talla}` : 'cantidad solicitada'}.` });
+      return res.status(400).send({
+        status: "Error",
+        message: `Stock no disponible para la ${tipoProducto === 'Correa' ? `talla ${talla}` : 'cantidad solicitada'}.`
+      });
     }
 
     // Verificar si la cantidad solicitada excede el stock
@@ -164,6 +187,11 @@ module.exports.AgregarCart = async (req, res) => {
     } else {
       producto.Cantidad -= cantidad;
     }
+
+    // === 🔥 Incrementar la cantidad vendida ===
+    producto.CantidadVenta = (producto.CantidadVenta || 0) + cantidad;
+
+    // Guardar cambios
     await producto.save();
 
     // Crear un nuevo pedido
@@ -174,7 +202,10 @@ module.exports.AgregarCart = async (req, res) => {
       Precio: producto.Precio,
       Imagen: producto.Imagen || producto.Imagenes[0], // Ajustar según el esquema de Producto
     });
-    await nuevoPedido.save();    
+
+    await nuevoPedido.save();
+
+    // Redirigir al pedido
     res.redirect('/Pedido');
   } catch (err) {
     console.error('Error al procesar el pedido:', err);
@@ -182,34 +213,50 @@ module.exports.AgregarCart = async (req, res) => {
   }
 };
 
+
 module.exports.eliminarPedido = async (req, res) => {
   const id = req.params.id;
 
   try {
+    // Buscar el pedido
     const pedido = await Pedido.findById(id);
     if (!pedido) {
       console.log("Pedido no encontrado.");
       return res.status(404).redirect('/Pedido');
     }
-    
+
     const { Producto: nombreProducto, Cantidad, Talla } = pedido;
-    
+
+    // Eliminar el pedido
     await Pedido.findByIdAndDelete(id);
     console.log("Pedido eliminado:", pedido);
 
+    // Buscar el producto correspondiente
     const producto = await Producto.findOne({ Producto: nombreProducto.trim() });
     if (!producto) {
       console.log("Producto no encontrado en la colección Producto.");
       return res.status(404).redirect('/Pedido');
     }
 
+    // Restaurar el stock
     if (Talla && Talla !== 'N/A') {
       producto[Talla] += Cantidad;
     } else {
       producto.Cantidad += Cantidad;
     }
-    
+
+    // 🔥 Restar de CantidadVenta
+    if (typeof producto.CantidadVenta === "number") {
+      producto.CantidadVenta = Math.max(0, producto.CantidadVenta - Cantidad);
+    } else {
+      // Si no existe el campo o no es número, lo inicializamos
+      producto.CantidadVenta = 0;
+    }
+
+    // Guardar cambios
     await producto.save();
+
+    console.log(`🟢 Stock y CantidadVenta actualizados para ${nombreProducto}`);
 
     res.redirect('/Pedido');
   } catch (error) {
@@ -217,6 +264,7 @@ module.exports.eliminarPedido = async (req, res) => {
     res.status(500).send("Hubo un error al procesar la eliminación del pedido");
   }
 };
+
 /// Función para ejecutar comandos de Git
 function runGitCommand(command, callback) {
   exec(command, (err, stdout, stderr) => {

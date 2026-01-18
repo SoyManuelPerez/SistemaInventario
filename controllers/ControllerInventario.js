@@ -2,6 +2,7 @@ const Productos = require('../models/Producto');
 const PDFDocument = require('pdfkit');
 const multer = require('multer');
 const path = require('path');
+const Carrito = require('../models/cart');
 const fs = require('fs');
 const Usuario = require('../models/Usuarios')
 const dotenv =  require('dotenv')
@@ -511,16 +512,44 @@ function configureGitRemote(callback) {
   });
 }
 //Mostrar Catalogo
-module.exports.mostrarCliente = (req, res) => {
-  Promise.all([
-    Productos.find({ Cantidad: { $gt: 0 } }),
-  ]).then(([Producto]) => {
-    res.render('Cliente', {
-        Producto: Producto,
+module.exports.mostrarCliente = async (req, res) => {
+  try {
+    // Verificar si existe la cookie
+    let carroToken = req.cookies.EusseCueros;
+
+    if (!carroToken) {
+      // Crear token si no existe
+      carroToken = jsonwebtoken.sign(
+        {}, 
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRATION }
+      );
+
+      const cookieOption = {
+        expires: new Date(
+          Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true,
+        path: "/"
+      };
+
+      res.cookie("EusseCueros", carroToken, cookieOption);
+    }
+
+    // Obtener productos y carrito en paralelo
+    const [productos, carrito] = await Promise.all([
+      Productos.find({ Cantidad: { $gt: 0 } }),
+      Carrito.find({ Cart: carroToken }),
+    ]);
+
+    // Renderizar vista con los datos
+    res.render("Cliente", {
+      Producto: productos,
+      Cart: carrito,
     });
-  })
-  .catch(err => {
-    console.log(err, 'Error mostrando datos');
-    res.status(500).send('Error mostrando datos');
-  });
-}
+
+  } catch (err) {
+    console.error("Error mostrando datos:", err);
+    res.status(500).send("Error mostrando datos");
+  }
+};
