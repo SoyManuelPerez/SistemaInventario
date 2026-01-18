@@ -22,12 +22,16 @@
       <form action="/CrearProducto" method="POST" enctype="multipart/form-data" class="form">
         <input type="text" name="Producto" placeholder="Nombre del producto" required>
       
-        <select name="Tipo" id="Tipo" class="form-select" required onchange="showFields()">
-          <option value="">Categoria</option>
-          <option value="Correa">Correa</option>
-          <option value="Bolso">Bolso</option>
-          <option value="Accesorios">Accesorios</option>
-        </select>
+      <select name="Tipo" id="Tipo" class="form-select" required onchange="showFields()">
+        <option value="">Categoría</option>
+        <option value="Riñonera">Riñonera</option>
+        <option value="Bolso">Bolso</option>
+        <option value="Correa">Correa</option>
+        <option value="Billetera">Billetera</option>
+        <option value="Accesorios">Accesorios</option>
+        <option value="Camisas y chaquetas">Camisas y chaquetas</option>
+      </select>
+
       
         <input type="number" name="Precio" placeholder="Precio del producto" required>
       
