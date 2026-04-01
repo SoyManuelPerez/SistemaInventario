@@ -31,135 +31,179 @@ module.exports.Crear = async (req, res) => {
     const Imagenes = req.files ? req.files.map(file => file.filename) : [];
 
     let cantidades = {};
-    if (Tipo === 'Correa') {
-      const cantidadTotal = 
-        Number(Cantidad30) + 
-        Number(Cantidad32) + 
-        Number(Cantidad34) + 
-        Number(Cantidad36) + 
-        Number(Cantidad38) + 
-        Number(Cantidad40) + 
-        Number(Cantidad42) + 
-        Number(Cantidad44) + 
-        Number(Cantidad46);
+        if (Tipo === 'Correa') {
+          const cantidadTotal = 
+            Number(Cantidad30) + 
+            Number(Cantidad32) + 
+            Number(Cantidad34) + 
+            Number(Cantidad36) + 
+            Number(Cantidad38) + 
+            Number(Cantidad40) + 
+            Number(Cantidad42) + 
+            Number(Cantidad44) + 
+            Number(Cantidad46);
 
-      cantidades = { 
-        T30: Number(Cantidad30), 
-        T32: Number(Cantidad32), 
-        T34: Number(Cantidad34), 
-        T36: Number(Cantidad36), 
-        T38: Number(Cantidad38), 
-        T40: Number(Cantidad40), 
-        T42: Number(Cantidad42), 
-        T44: Number(Cantidad44), 
-        T46: Number(Cantidad46),
-        Cantidad: cantidadTotal // Total de todas las tallas
-      };
-    } else if (Tipo === 'Bolso') {
-      cantidades = { Cantidad: Number(CantidadBolso) };
-    }
-
-    const newProducto = new Productos({
-      Producto,
-      Precio,
-      Tipo,
-      Imagenes,
-      ...cantidades
-    });
-
-    try {
-      console.log(newProducto);
-      await newProducto.save();
-      updateGitRepo(res);
-    } catch (error) {
-      res.status(500).send("Error al guardar el producto.");
-      console.log(error);
-    }
-  });
-};
-//PDF
-async function getOptimizedImageBuffer(imagenPath) {
-  return await sharp(imagenPath)
-    .resize({ width: 500 }) // Redimensionar ancho máximo a 500px
-    .jpeg({ quality: 70 })  // Comprimir calidad
-    .toBuffer();
-}
-
-module.exports.PDF = async (req, res) => {
-  try {
-    const tabla = req.query.tabla;
-
-    // Definir el tipo de producto basado en la tabla
-    let tipo;
-    let maxProductosPorPagina = 3; // Por defecto
-    let maxImagenesPorFila = 3;   // Por defecto
-
-    if (tabla === "inventarioCorreas") {
-      tipo = "Correa";
-      maxProductosPorPagina = 4;
-      maxImagenesPorFila = 3;
-    } else if (tabla === "inventarioBolsos") {
-      tipo = "Bolso";
-    } else if (tabla === "inventarioAccesorios") {
-      tipo = "Accesorios";
-    } else {
-      return res.status(400).send("Tabla no válida");
-    }
-
-    // Filtrar productos por tipo y cantidad mayor a 0 y ORDENAR alfabéticamente por nombre
-    const productos = await Productos.find({
-      Tipo: tipo,
-      Cantidad: { $gt: 0 },
-    }).sort({ Producto: 1 }); // Orden ascendente (A → Z)
-
-    const doc = new PDFDocument();
-
-    // Configurar encabezados de respuesta
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename=${tabla}.pdf`);
-
-    doc.pipe(res);
-
-    let productoCount = 0;
-    let filaCount = 0;
-
-    for (const producto of productos) {
-      if (tipo === "Correa") {
-        // ------------------- Lógica Correas -------------------
-        if (filaCount === maxProductosPorPagina) {
-          doc.addPage();
-          filaCount = 0;
+          cantidades = { 
+            T30: Number(Cantidad30), 
+            T32: Number(Cantidad32), 
+            T34: Number(Cantidad34), 
+            T36: Number(Cantidad36), 
+            T38: Number(Cantidad38), 
+            T40: Number(Cantidad40), 
+            T42: Number(Cantidad42), 
+            T44: Number(Cantidad44), 
+            T46: Number(Cantidad46),
+            Cantidad: cantidadTotal // Total de todas las tallas
+          };
+        } else if (Tipo === 'Bolso') {
+          cantidades = { Cantidad: Number(CantidadBolso) };
         }
 
-        const margenIzquierdo = 50;
-        const espaciadoHorizontal = 160;
-        const xPos =
-          margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal;
-        const yPos = doc.y;
+        const newProducto = new Productos({
+          Producto,
+          Precio,
+          Tipo,
+          Imagenes,
+          ...cantidades
+        });
 
-        if (producto.Imagenes && producto.Imagenes.length > 0) {
-          try {
-            const imagenPath = path.join(
-              __dirname,
-              "..",
-              "public",
-              "img",
-              "Productos",
-              producto.Imagenes[0]
-            );
-            const buffer = await getOptimizedImageBuffer(imagenPath);
-            doc.image(buffer, xPos, yPos, { width: 150 });
-          } catch (err) {
-            console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
+        try {
+          console.log(newProducto);
+          await newProducto.save();
+          updateGitRepo(res);
+        } catch (error) {
+          res.status(500).send("Error al guardar el producto.");
+          console.log(error);
+        }
+      });
+    };
+    //PDF
+    async function getOptimizedImageBuffer(imagenPath) {
+      return await sharp(imagenPath)
+        .resize({ width: 500 }) // Redimensionar ancho máximo a 500px
+        .jpeg({ quality: 70 })  // Comprimir calidad
+        .toBuffer();
+    }
+
+    module.exports.PDF = async (req, res) => {
+      try {
+        const tabla = req.query.tabla;
+
+        // Definir el tipo de producto basado en la tabla
+        let tipo;
+        let maxProductosPorPagina = 3; // Por defecto
+        let maxImagenesPorFila = 3;   // Por defecto
+          if (tabla === "inventarioCorreas") {
+            tipo = "Correa";
+            maxProductosPorPagina = 3;
+            maxImagenesPorFila = 3;
+
+          } else if (tabla === "inventarioBolsos") {
+            tipo = "Bolso";
+
+          } else if (tabla === "inventarioAccesorios") {
+            tipo = "Accesorios";
+
+          } else if (tabla === "inventarioRinoneras") {
+            tipo = "Riñonera";
+
+          } else if (tabla === "inventarioBilleteras") {
+            tipo = "Billetera";
+
+          } else if (tabla === "inventarioCamisas") {
+            tipo = "Camisas";
+
+          } else if (tabla === "inventarioChaquetas") {
+            tipo = "Chaquetas";
+
+          } else {
+            return res.status(400).send("Tabla no válida");
+          }
+
+        // Filtrar productos por tipo y cantidad mayor a 0 y ORDENAR alfabéticamente por nombre
+        const productos = await Productos.find({
+          Tipo: tipo,
+          Cantidad: { $gt: 0 },
+        }).sort({ Producto: 1 }); // Orden ascendente (A → Z)
+
+        const doc = new PDFDocument();
+
+        // Configurar encabezados de respuesta
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename=${tabla}.pdf`);
+
+        doc.pipe(res);
+
+        let productoCount = 0;
+        let filaCount = 0;
+
+        for (const producto of productos) {
+        if (tipo === "Correa") {
+        if (productoCount === maxProductosPorPagina) {
+          doc.addPage();
+          productoCount = 0;
+        }
+
+        const imagenes = producto.Imagenes || [];
+        let yInicial = doc.y;
+
+        if (imagenes.length > 0) {
+          for (let idx = 0; idx < imagenes.length; idx++) {
+            const imagen = imagenes[idx];
+            const xPos = 50 + (idx % maxImagenesPorFila) * 150;
+
+            try {
+              const imagenPath = path.join(
+                __dirname,
+                "..",
+                "public",
+                "img",
+                "Productos",
+                imagen
+              );
+              const buffer = await getOptimizedImageBuffer(imagenPath);
+              doc.image(buffer, xPos, yInicial, { width: 100 });
+
+              if ((idx + 1) % maxImagenesPorFila === 0) {
+                yInicial += 110;
+              }
+            } catch (err) {
+              console.error(`Error al cargar la imagen: ${imagen}`, err);
+            }
           }
         }
 
+        // Ajustar posición para texto después de todas las imágenes
+        doc.moveDown(9);
+
+        // Nombre del producto (dividido por comas si aplica)
+        const nombreProducto = producto.Producto
+          ? producto.Producto.split(",")
+          : ["Producto sin nombre"];
+        nombreProducto.forEach((linea) => {
+          doc.fontSize(14).font("Helvetica-Bold").text(linea.trim(), { align: "right" });
+        });
+
+        // Precio del producto
+        doc
+          .fontSize(12)
+          .font("Helvetica")
+          .text(
+            `Precio: $${producto.Precio ? producto.Precio.toLocaleString("es-CO") : "N/A"} COP`,
+            { align: "right" }
+          );
+
+        // Separador
+        doc
+          .moveDown(3)
+          .moveTo(50, doc.y)
+          .lineTo(550, doc.y)
+          .strokeColor("black")
+          .stroke();
+
+        doc.moveDown(1);
         productoCount++;
-        if (productoCount % maxImagenesPorFila === 0) {
-          doc.moveDown(12);
-          filaCount++;
-        }
-      } else {
+    }else {
         // ------------------- Lógica Bolsos y Accesorios -------------------
         if (productoCount === maxProductosPorPagina) {
           doc.addPage();
@@ -494,7 +538,6 @@ function updateGitRepo(res) {
     });
   });
 }
-
 
 // Función para configurar el repositorio remoto
 function configureGitRemote(callback) {
