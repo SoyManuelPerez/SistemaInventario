@@ -145,8 +145,8 @@ module.exports.Crear = async (req, res) => {
           filaCount = 0;
         }
 
-        const margenIzquierdo = 50;
-        const espaciadoHorizontal = 160;
+        const margenIzquierdo = 20;
+        const espaciadoHorizontal = 180;
         const xPos =
           margenIzquierdo + (productoCount % maxImagenesPorFila) * espaciadoHorizontal;
         const yPos = doc.y;
@@ -162,7 +162,7 @@ module.exports.Crear = async (req, res) => {
               producto.Imagenes[0]
             );
             const buffer = await getOptimizedImageBuffer(imagenPath);
-            doc.image(buffer, xPos, yPos, { width: 150 });
+            doc.image(buffer, xPos, yPos, { width: 220 });
           } catch (err) {
             console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
           }
