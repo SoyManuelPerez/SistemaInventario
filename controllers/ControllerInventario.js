@@ -78,12 +78,17 @@ module.exports.Crear = async (req, res) => {
       });
     };
     //PDF
-    async function getOptimizedImageBuffer(imagenPath) {
-      return await sharp(imagenPath)
-        .resize({ width: 450 }) // Redimensionar ancho máximo a 500px
-        .jpeg({ quality: 70 })  // Comprimir calidad
-        .toBuffer();
-    }
+  async function getOptimizedImageBuffer(imagenPath) {
+  return await sharp(imagenPath)
+    .resize({ 
+      width: 400, 
+      height: 400,          // Define también un alto máximo
+      fit: 'inside',        // Asegura que la imagen completa quepa en la caja de 450x450
+      withoutEnlargement: true // Evita que las imágenes más pequeñas de 450px se estiren y pierdan calidad
+    }) 
+    .jpeg({ quality: 70 })  
+    .toBuffer();
+}
 
     module.exports.PDF = async (req, res) => {
       try {
