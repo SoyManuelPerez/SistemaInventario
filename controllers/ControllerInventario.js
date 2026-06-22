@@ -167,7 +167,7 @@ module.exports.Crear = async (req, res) => {
               producto.Imagenes[0]
             );
             const buffer = await getOptimizedImageBuffer(imagenPath);
-            doc.image(buffer, xPos, yPos, { width: 220 });
+            doc.image(buffer, xPos, yPos, { width: 170 });
           } catch (err) {
             console.error(`Error al cargar la imagen: ${producto.Imagenes[0]}`, err);
           }
