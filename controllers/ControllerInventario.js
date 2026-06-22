@@ -80,7 +80,7 @@ module.exports.Crear = async (req, res) => {
     //PDF
     async function getOptimizedImageBuffer(imagenPath) {
       return await sharp(imagenPath)
-        .resize({ width: 500 }) // Redimensionar ancho máximo a 500px
+        .resize({ width: 450 }) // Redimensionar ancho máximo a 500px
         .jpeg({ quality: 70 })  // Comprimir calidad
         .toBuffer();
     }
